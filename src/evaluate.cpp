@@ -310,6 +310,8 @@ namespace {
 
         int mob = popcount(b & mobilityArea[Us]);
 
+        bool corner_square = ((Us == WHITE && (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1))) || (Us == BLACK && (s == relative_square(Us, SQ_A8) || s == relative_square(Us, SQ_H8))));
+
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         if (Pt == BISHOP || Pt == KNIGHT)
@@ -350,13 +352,13 @@ namespace {
             // when that pawn is also blocked.
             if (   Pt == BISHOP
                 && pos.is_chess960()
-                && (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1)))
+                && corner_square)
             {
                 Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
-                if (pos.piece_on(s + d) == make_piece(Us, PAWN))
+                if ((pos.piece_on(s + d) == make_piece(Us, PAWN)) || (pos.piece_on(s + d + d) == make_piece(Us, PAWN)))
                     score -= !pos.empty(s + d + pawn_push(Us))                ? CorneredBishop * 4
-                            : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
-                                                                              : CorneredBishop;
+                            : ((pos.piece_on(s + d + d) == make_piece(Us, PAWN)) && (pos.empty(s + d + pawn_push(Us)) && bool(attackedBy[Them][PAWN] & (s + d + pawn_push(Us))))) ? CorneredBishop * 4
+                                                                              : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2 : CorneredBishop;
             }
         }
 
@@ -371,7 +373,7 @@ namespace {
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
             // Penalty when trapped by the king, even more if the king cannot castle
-            else if (mob <= 3)
+            else if (mob <= 3 && corner_square)
             {
                 File kf = file_of(pos.square<KING>(Us));
                 if ((kf < FILE_E) == (file_of(s) < kf))
