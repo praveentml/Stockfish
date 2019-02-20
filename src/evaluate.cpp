@@ -353,10 +353,10 @@ namespace {
                 && (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1)))
             {
                 Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
-                if ((pos.piece_on(s + d) == make_piece(Us, PAWN)) || (pos.piece_on(s + d + d) == make_piece(Us, PAWN)))
-                    score -= !pos.empty(s + d + pawn_push(Us)) ? CorneredBishop * 4
-                            : ((pos.piece_on(s + d + d) == make_piece(Us, PAWN)) && (pos.empty(s + d + pawn_push(Us)) && bool(attackedBy[Them][PAWN] & (s + d + pawn_push(Us))))) ? CorneredBishop * 4
-                                                                              : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2 : CorneredBishop;
+                if (pos.piece_on(s + d) == make_piece(Us, PAWN))
+                    score -= !pos.empty(s + d + pawn_push(Us))                ? CorneredBishop * 4
+                            : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
+                                                                              : CorneredBishop;
             }
         }
 
@@ -371,11 +371,15 @@ namespace {
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
             // Penalty when trapped by the king, even more if the king cannot castle
-            else if (mob <= 3 && (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1)))
+            else if (mob <= 3)
             {
                 File kf = file_of(pos.square<KING>(Us));
-                if ((kf < FILE_E) == (file_of(s) < kf))
-                    score -= TrappedRook * (1 + !pos.castling_rights(Us));
+                if(kf != FILE_E && (relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && pos.can_castle(NO_CASTLING)) {
+                	if (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1))
+                		score -= TrappedRook * (2 + !pos.castling_rights(Us));
+                	else if (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1)
+                		score -= TrappedRook * (1 + !pos.castling_rights(Us));
+                }
             }
         }
 
