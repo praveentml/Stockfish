@@ -503,46 +503,37 @@ namespace {
 
 	    constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
 	    const Square* pl = pos.squares<Pt>(Us);
-	    Bitboard b, movePotential;
+	    Bitboard b;
 	    Score score = SCORE_ZERO;
-	    movePotential = attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES];
-	    kingMobility[Us][KING] = popcount(movePotential);
+	    b = ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES];
+	    kingMobility[Us][KING] = popcount(attackedBy[Us][KING] & b);
+		int rookMobility = popcount(attackedBy[Us][ROOK] & b);
 
 	    for (Square s = *pl; s != SQ_NONE; s = *++pl)
 	    {
-	        b = Pt == BISHOP ? attacks_bb<BISHOP>(s, pos.pieces() ^ pos.pieces(QUEEN))
-	          : Pt ==   ROOK ? attacks_bb<  ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK))
-	                         : pos.attacks_from<Pt>(s);
-	        if (pos.blockers_for_king(Us) & s)
-	            b &= LineBB[pos.square<KING>(Us)][s];
-
-	        int mob = popcount(b & mobilityArea[Us]);
-	    	if (Pt == ROOK)
-	    	        {
-	    	            if (mob <= 3)
-	    	            {
-	    	            	File kf = file_of(pos.square<KING>(Us));
-	    	            	if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
-	    	            	{
-	    						if ((kf < FILE_E) == (file_of(s) < kf))
-	    						{
-	    							score -= TrappedRook * (1 + !pos.castling_rights(Us));
-	    							// Even bigger penalty if our king has no prospect
-	    							// of moving out of the way
-	    							if (kingMobility[Us][KING] <= 0 && mob <=2)
-	    								score -= TrappedRook;
-	    						}
-	    						else if ((kf > FILE_E) == (file_of(s) > kf))
-	    						{
-	    								score -= TrappedRook * (1 + !pos.castling_rights(Us));
-	    								// Even bigger penalty if our king has no prospect
-	    								// of moving out of the way
-	    								if (kingMobility[Us][KING] <= 0 && mob <=2)
-	    									score -= TrappedRook;
-	    						}
-	    					}
-	    	            }
-	    	        }
+			if (rookMobility <= 3)
+			{
+				File kf = file_of(pos.square<KING>(Us));
+				if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
+				{
+					if ((kf < FILE_E) == (file_of(s) < kf))
+					{
+						score -= TrappedRook * (1 + !pos.castling_rights(Us));
+						// Even bigger penalty if our king has no prospect
+						// of moving out of the way
+						if (kingMobility[Us][KING] <= 0 && rookMobility <=2)
+							score -= TrappedRook;
+					}
+					else if ((kf > FILE_E) == (file_of(s) > kf))
+					{
+							score -= TrappedRook * (1 + !pos.castling_rights(Us));
+							// Even bigger penalty if our king has no prospect
+							// of moving out of the way
+							if (kingMobility[Us][KING] <= 0 && rookMobility <=2)
+								score -= TrappedRook;
+					}
+				}
+			}
 	    }
         if (T)
             Trace::add(Pt, Us, score);
@@ -882,10 +873,7 @@ namespace {
     initialize<BLACK>();
 
     // Must be computed after attack tables have been evaluated
-    score +=  kingMob<WHITE, KNIGHT>() - kingMob<BLACK, KNIGHT>()
-			+ kingMob<WHITE, BISHOP>() - kingMob<BLACK, BISHOP>()
-			+ kingMob<WHITE, QUEEN >() - kingMob<BLACK, QUEEN >()
-			+ kingMob<WHITE, ROOK  >() - kingMob<BLACK, ROOK  >();
+    score +=  kingMob<WHITE, ROOK  >() - kingMob<BLACK, ROOK  >();
 
     // Pieces should be evaluated first (populate attack tables)
     score +=  pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>()
