@@ -519,7 +519,7 @@ namespace {
 	        int mob = popcount(b & mobilityArea[Us]);
 	    	if (Pt == ROOK)
 	    	        {
-	    	            if (!(pe->semiopen_file(Us, file_of(s))) && mob <= 3)
+	    	            if (mob <= 3)
 	    	            {
 	    	            	File kf = file_of(pos.square<KING>(Us));
 	    	            	if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
