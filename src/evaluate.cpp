@@ -513,7 +513,7 @@ namespace {
 			if (rookMobility <= 3 && ~(pe->semiopen_file(Us, file_of(s))))
 			{
 				File kf = file_of(pos.square<KING>(Us));
-					if ((kf < FILE_E) == (file_of(s) < kf))
+					if (((kf < FILE_E) == (file_of(s) < kf)) || ((kf > FILE_E) == (file_of(s) > kf)))
 					{
 						(rookMobility <= 1) ? score -= TrappedRook * (2 + !pos.castling_rights(Us)) : score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
