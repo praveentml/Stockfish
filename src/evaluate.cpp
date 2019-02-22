@@ -501,13 +501,11 @@ namespace {
   template<Tracing T> template<Color Us, PieceType Pt>
   Score Evaluation<T>::kingMob() {
 
-	    constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
+	    constexpr Color    Them = (Us == WHITE ? BLACK : WHITE);
 	    const Square* pl = pos.squares<Pt>(Us);
-	    Bitboard b;
 	    Score score = SCORE_ZERO;
-	    b = ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES];
-	    kingMobility[Us][KING] = popcount(attackedBy[Us][KING] & b);
-		int rookMobility = popcount(attackedBy[Us][ROOK] & b);
+	    kingMobility[Us][KING] = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
+		int rookMobility = popcount(attackedBy[Us][ROOK] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
 
 	    for (Square s = *pl; s != SQ_NONE; s = *++pl)
 	    {
@@ -524,14 +522,14 @@ namespace {
 						if (kingMobility[Us][KING] <= 0)
 							score -= TrappedRook * (4 - rookMobility);
 					}
-					/*else if ((kf > FILE_E) == (file_of(s) > kf))
+					else if ((kf > FILE_E) == (file_of(s) > kf))
 					{
 							score -= TrappedRook * (1 + !pos.castling_rights(Us));
 							// Even bigger penalty if our king has no prospect
 							// of moving out of the way
 							if (kingMobility[Us][KING] <= 0)
 								score -= TrappedRook * (4 - rookMobility);
-					}*/
+					}
 				//}
 			}
 	    }
