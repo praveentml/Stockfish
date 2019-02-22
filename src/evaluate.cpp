@@ -870,9 +870,6 @@ namespace {
     initialize<WHITE>();
     initialize<BLACK>();
 
-    // Must be computed after attack tables have been evaluated
-    score +=  kingMob<WHITE, ROOK  >() - kingMob<BLACK, ROOK  >();
-
     // Pieces should be evaluated first (populate attack tables)
     score +=  pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>()
             + pieces<WHITE, BISHOP>() - pieces<BLACK, BISHOP>()
@@ -887,6 +884,9 @@ namespace {
             + space<  WHITE>() - space<  BLACK>();
 
     score += initiative(eg_value(score));
+
+    // Must be computed after attack tables have been evaluated
+    score +=  kingMob<WHITE, ROOK  >() - kingMob<BLACK, ROOK  >();
 
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
     ScaleFactor sf = scale_factor(eg_value(score));
