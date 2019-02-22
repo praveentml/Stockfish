@@ -514,7 +514,7 @@ namespace {
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
 						if (kingMobility <= 1)
-							score -= TrappedRook * (4 - rookMobility);
+							score -= TrappedRook * (2 - kingMobility);
 					}
 				}
 			}
