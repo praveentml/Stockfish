@@ -509,7 +509,7 @@ namespace {
 
 	    for (Square s = *pl; s != SQ_NONE; s = *++pl)
 	    {
-			if (rookMobility <= 3)
+			if (rookMobility <= 3 && ~pe->semiopen_file(Us, file_of(s)))
 			{
 				File kf = file_of(pos.square<KING>(Us));
 				if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
@@ -519,7 +519,7 @@ namespace {
 						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 2)
+						if (kingMobility[Us][KING] <= 1)
 							score -= TrappedRook * (4 - rookMobility);
 					}
 					else if ((kf > FILE_E) == (file_of(s) > kf))
@@ -527,7 +527,7 @@ namespace {
 						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 2)
+						if (kingMobility[Us][KING] <= 1)
 							score -= TrappedRook * (4 - rookMobility);
 					}
 				}
