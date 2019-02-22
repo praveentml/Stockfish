@@ -194,10 +194,6 @@ namespace {
     Bitboard mobilityArea[COLOR_NB];
     Score mobility[COLOR_NB] = { SCORE_ZERO, SCORE_ZERO };
 
-    // mobility[color] stores mobility data for all pieces,
-    // with several pieces of the same type ordered by bitboard pos lsb.
-    int kingMobility[COLOR_NB];
-
     // attackedBy[color][piece type] is a bitboard representing all squares
     // attacked by a given color and piece type. Special "piece types" which
     // is also calculated is ALL_PIECES.
@@ -504,35 +500,24 @@ namespace {
 	    constexpr Color    Them = (Us == WHITE ? BLACK : WHITE);
 	    const Square* pl = pos.squares<Pt>(Us);
 	    Score score = SCORE_ZERO;
-	    kingMobility[Us] = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
-		int rookMobility = popcount(attackedBy[Us][ROOK] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
+	    int kingMobility = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
 
 	    for (Square s = *pl; s != SQ_NONE; s = *++pl)
 	    {
-			if (rookMobility <= 3 && ~pe->semiopen_file(Us, file_of(s)))
+			int rookMobility = popcount(attacks_bb<ROOK>(s,pos.pieces()) & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
+			if (rookMobility <= 3 && ~(pe->semiopen_file(Us, file_of(s))))
 			{
 				File kf = file_of(pos.square<KING>(Us));
-				if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
-				{
 					if ((kf < FILE_E) == (file_of(s) < kf))
 					{
 						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us] <= 1)
-							score -= TrappedRook * (4 - rookMobility);
-					}
-					else if ((kf > FILE_E) == (file_of(s) > kf))
-					{
-						score -= TrappedRook * (1 + !pos.castling_rights(Us));
-						// Even bigger penalty if our king has no prospect
-						// of moving out of the way
-						if (kingMobility[Us] <= 1)
+						if (kingMobility <= 1)
 							score -= TrappedRook * (4 - rookMobility);
 					}
 				}
 			}
-	    }
         if (T)
             Trace::add(Pt, Us, score);
 
