@@ -181,6 +181,7 @@ namespace {
     template<Color Us> void initialize();
     template<Color Us, PieceType Pt> Score pieces();
     template<Color Us> Score king() const;
+    template<Color Us, PieceType Pt> Score kingMob();
     template<Color Us> Score threats() const;
     template<Color Us> Score passed() const;
     template<Color Us> Score space() const;
@@ -270,7 +271,6 @@ namespace {
     // Remove from kingRing[] the squares defended by two pawns
     kingRing[Us] &= ~pawn_double_attacks_bb<Us>(pos.pieces(Us, PAWN));
   }
-
 
   // Evaluation::pieces() scores pieces of a given color and type
   template<Tracing T> template<Color Us, PieceType Pt>
@@ -370,15 +370,6 @@ namespace {
             if (pe->semiopen_file(Us, file_of(s)))
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
-            // Penalty when trapped by the king, even more if the king cannot castle
-            else if (mob <= 3)
-            {
-                File kf = file_of(pos.square<KING>(Us));
-					if ((kf < FILE_E) == (file_of(s) < kf))
-					{
-						(mob <= 1) ? score -= TrappedRook * (2 + !pos.castling_rights(Us)) : score -= TrappedRook * (1 + !pos.castling_rights(Us)) ;
-					}
-           }
         }
 
         if (Pt == QUEEN)
@@ -394,7 +385,6 @@ namespace {
 
     return score;
   }
-
 
   // Evaluation::king() assigns bonuses and penalties to a king of a given color
   template<Tracing T> template<Color Us>
@@ -503,6 +493,41 @@ namespace {
     return score;
   }
 
+  // Evaluation::kingMob() evaluates king mobility
+  template<Tracing T> template<Color Us, PieceType Pt>
+  Score Evaluation<T>::kingMob() {
+
+	    constexpr Color    Them = (Us == WHITE ? BLACK : WHITE);
+	    const Square* pl = pos.squares<Pt>(Us);
+	    Bitboard b;
+	    Score score = SCORE_ZERO;
+	    int kingMobility = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
+
+	    for (Square s = *pl; s != SQ_NONE; s = *++pl)
+	    {
+	    	b = attacks_bb< ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK));
+			if (pos.blockers_for_king(Us) & s)
+				b &= LineBB[pos.square<KING>(Us)][s];
+			int rookMobility = popcount( b & mobilityArea[Us]);
+
+			if (rookMobility <= 3 && ~(pe->semiopen_file(Us, file_of(s))))
+			{
+				File kf = file_of(pos.square<KING>(Us));
+					if ((kf < FILE_E) == (file_of(s) < kf))
+					{
+						score -= TrappedRook * (1 + !pos.castling_rights(Us));
+						// Even bigger penalty if our king has no prospect
+						// of moving out of the way
+						if (kingMobility <= 1 && rookMobility <= 2)
+							score -= TrappedRook * (3 - rookMobility);
+					}
+				}
+			}
+        if (T)
+            Trace::add(Pt, Us, score);
+
+        return score;
+  }
 
   // Evaluation::threats() assigns bonuses according to the types of the
   // attacking and the attacked pieces.
@@ -847,6 +872,8 @@ namespace {
             + threats<WHITE>() - threats<BLACK>()
             + passed< WHITE>() - passed< BLACK>()
             + space<  WHITE>() - space<  BLACK>();
+
+    score +=  kingMob<WHITE, ROOK  >() - kingMob<BLACK, ROOK  >();
 
     score += initiative(eg_value(score));
 
