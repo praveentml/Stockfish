@@ -515,11 +515,11 @@ namespace {
 				File kf = file_of(pos.square<KING>(Us));
 					if ((kf < FILE_E) == (file_of(s) < kf))
 					{
-						score -= TrappedRook * (1 + !pos.castling_rights(Us));
+						(rookMobility <= 1) ? score -= TrappedRook * (2 + !pos.castling_rights(Us)) : score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility <= 1 && rookMobility <= 2)
-							score -= TrappedRook * (3 - rookMobility);
+						if (kingMobility <= 0)
+							score -= TrappedRook;
 					}
 				}
 			}
