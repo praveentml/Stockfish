@@ -194,9 +194,9 @@ namespace {
     Bitboard mobilityArea[COLOR_NB];
     Score mobility[COLOR_NB] = { SCORE_ZERO, SCORE_ZERO };
 
-    // mobility[color][piece type] stores mobility data for all pieces,
+    // mobility[color] stores mobility data for all pieces,
     // with several pieces of the same type ordered by bitboard pos lsb.
-    int kingMobility[COLOR_NB][PIECE_TYPE_NB];
+    int kingMobility[COLOR_NB];
 
     // attackedBy[color][piece type] is a bitboard representing all squares
     // attacked by a given color and piece type. Special "piece types" which
@@ -504,7 +504,7 @@ namespace {
 	    constexpr Color    Them = (Us == WHITE ? BLACK : WHITE);
 	    const Square* pl = pos.squares<Pt>(Us);
 	    Score score = SCORE_ZERO;
-	    kingMobility[Us][KING] = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
+	    kingMobility[Us] = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
 		int rookMobility = popcount(attackedBy[Us][ROOK] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
 
 	    for (Square s = *pl; s != SQ_NONE; s = *++pl)
@@ -519,7 +519,7 @@ namespace {
 						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 1)
+						if (kingMobility[Us] <= 1)
 							score -= TrappedRook * (4 - rookMobility);
 					}
 					else if ((kf > FILE_E) == (file_of(s) > kf))
@@ -527,7 +527,7 @@ namespace {
 						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 1)
+						if (kingMobility[Us] <= 1)
 							score -= TrappedRook * (4 - rookMobility);
 					}
 				}
