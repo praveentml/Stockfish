@@ -516,19 +516,19 @@ namespace {
 				{
 					if ((kf < FILE_E) == (file_of(s) < kf))
 					{
-						score -= TrappedRook * (1 + !pos.castling_rights(Us) + (4 - rookMobility));
+						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 0)
-							score -= TrappedRook;
+						if (kingMobility[Us][KING] <= 2)
+							score -= TrappedRook * ((2 - kingMobility[Us][KING]) + (4 - rookMobility));
 					}
 					else if ((kf > FILE_E) == (file_of(s) > kf))
 					{
-						score -= TrappedRook * (1 + !pos.castling_rights(Us) + (4 - rookMobility));
+						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 0)
-							score -= TrappedRook;
+						if (kingMobility[Us][KING] <= 2)
+							score -= TrappedRook * ((2 - kingMobility[Us][KING]) + (4 - rookMobility));
 					}
 				}
 			}
