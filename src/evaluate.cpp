@@ -512,25 +512,25 @@ namespace {
 			if (rookMobility <= 3)
 			{
 				File kf = file_of(pos.square<KING>(Us));
-				//if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
-				//{
+				if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
+				{
 					if ((kf < FILE_E) == (file_of(s) < kf))
 					{
-						score -= TrappedRook * (1 + !pos.castling_rights(Us));
+						score -= TrappedRook * (1 + !pos.castling_rights(Us) + (4 - rookMobility));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 1)
-							score -= TrappedRook * (4 - rookMobility);
+						if (kingMobility[Us][KING] <= 0)
+							score -= TrappedRook;
 					}
 					else if ((kf > FILE_E) == (file_of(s) > kf))
 					{
-						score -= TrappedRook * (1 + !pos.castling_rights(Us));
+						score -= TrappedRook * (1 + !pos.castling_rights(Us) + (4 - rookMobility));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility[Us][KING] <= 1)
-							score -= TrappedRook * (4 - rookMobility);
+						if (kingMobility[Us][KING] <= 0)
+							score -= TrappedRook;
 					}
-				//}
+				}
 			}
 	    }
         if (T)
