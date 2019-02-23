@@ -521,7 +521,7 @@ namespace {
 		    int kingMobility = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
 			int rookMobility = popcount( b & mobilityArea[Us]);
 
-			if (rookMobility <= 3 && ~(pe->semiopen_file(Us, file_of(s))))
+			if (rookMobility <= 3 && !(pe->semiopen_file(Us, file_of(s))))
 			{
 				File kf = file_of(pos.square<KING>(Us));
 					if ((kf < FILE_E) == (file_of(s) < kf))
