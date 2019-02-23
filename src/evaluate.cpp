@@ -529,7 +529,10 @@ namespace {
 						(rookMobility <= 1) ? score -= TrappedRook * (2 + !pos.castling_rights(Us)) : score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
-						if (kingMobility <= 0 || ((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1)))
+						if (kingMobility <= 0)
+							score -= TrappedRook;
+						//More penalty if they are on rank1
+						if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
 							score -= TrappedRook;
 					}
 			}
