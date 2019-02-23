@@ -504,7 +504,9 @@ namespace {
 
 	    for (Square s = *pl; s != SQ_NONE; s = *++pl)
 	    {
-	    	b = attacks_bb< ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK));
+	    	b = Pt == BISHOP ? attacks_bb<BISHOP>(s, pos.pieces() ^ pos.pieces(QUEEN))
+	    	          : Pt ==   ROOK ? attacks_bb<  ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK))
+	    	                         : pos.attacks_from<Pt>(s);
 			if (pos.blockers_for_king(Us) & s)
 				b &= LineBB[pos.square<KING>(Us)][s];
 
@@ -518,21 +520,24 @@ namespace {
 	            kingAttackersWeight[Us] += KingAttackWeights[Pt];
 	            kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
 	        }
-		    int kingMobility = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
-			int rookMobility = popcount( b & mobilityArea[Us]);
+	        if(Pt == ROOK)
+	        {
+				int kingMobility = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
+				int rookMobility = popcount( b & mobilityArea[Us]);
 
-			if (rookMobility <= 3 && !(pe->semiopen_file(Us, file_of(s))))
-			{
-				File kf = file_of(pos.square<KING>(Us));
-					if ((kf < FILE_E) == (file_of(s) < kf))
-					{
-						score -= TrappedRook * (1 + !pos.castling_rights(Us));
-						// Even bigger penalty if our king has no prospect
-						// of moving out of the way
-						if (kingMobility <= 0 && rookMobility <=2)
-							score -= TrappedRook;
-					}
-			}
+				if (rookMobility <= 3 && !(pe->semiopen_file(Us, file_of(s))))
+				{
+					File kf = file_of(pos.square<KING>(Us));
+						if ((kf < FILE_E) == (file_of(s) < kf))
+						{
+							(rookMobility <= 1) ? score -= TrappedRook * (2 + !pos.castling_rights(Us)) : score -= TrappedRook * (1 + !pos.castling_rights(Us));
+							// Even bigger penalty if our king has no prospect
+							// of moving out of the way
+							if (kingMobility <= 0)
+								score -= TrappedRook;
+						}
+				}
+	        }
 		}
         if (T)
             Trace::add(Pt, Us, score);
@@ -884,6 +889,12 @@ namespace {
             + passed< WHITE>() - passed< BLACK>()
             + space<  WHITE>() - space<  BLACK>();
 
+    kingMob<WHITE, KNIGHT>();
+	kingMob<BLACK, KNIGHT>();
+	kingMob<WHITE, BISHOP>();
+	kingMob<BLACK, BISHOP>();
+	kingMob<WHITE, QUEEN >();
+	kingMob<BLACK, QUEEN >();
     score +=  kingMob<WHITE, ROOK  >() - kingMob<BLACK, ROOK  >();
 
     score += initiative(eg_value(score));
