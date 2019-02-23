@@ -501,7 +501,7 @@ namespace {
 	{
 		int kingMob = popcount(attackedBy[Us][KING] & ~(pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]));
 		score -= TrappedRook * ((kingMob < 3) + !pos.castling_rights(Us));
-		if(kingMob <= 0 || trappedRookCount[Us] > 1)
+		if(kingMob <= 0)
 			score -= TrappedRook;
 	}
 
