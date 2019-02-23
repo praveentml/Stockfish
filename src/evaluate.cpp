@@ -376,7 +376,8 @@ namespace {
             else if (mob <= 3)
             {
                 File kf = file_of(pos.square<KING>(Us));
-                if ((kf < FILE_E) == (file_of(s) < kf))
+                //to cover Other side trapped rook along with King side
+                if (((kf < FILE_E) == (file_of(s) < kf)) || (kf != FILE_E && mob <= 2))
                     trappedRookCount[Us] += 1;
             }
 
@@ -501,7 +502,9 @@ namespace {
 	{
 		int kingMob = popcount(attackedBy[Us][KING] & ~(pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]));
 		score -= TrappedRook * ((kingMob < 3) + !pos.castling_rights(Us));
-		if(kingMob <= 0 || trappedRookCount[Us] > 1)
+		if(kingMob <= 0)
+			score -= TrappedRook;
+		if(trappedRookCount[Us] > 1)
 			score -= TrappedRook;
 	}
 
