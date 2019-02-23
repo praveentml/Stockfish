@@ -227,7 +227,7 @@ namespace {
     int kingAttacksCount[COLOR_NB];
 
     // trappedRookCount[color] is the number of trapped rooks by the given color
-    int trappedRookCount[COLOR_NB];
+    int trappedRookCount[COLOR_NB] = {0, 0};
   };
 
 
