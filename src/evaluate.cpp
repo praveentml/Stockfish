@@ -226,8 +226,6 @@ namespace {
     // a white knight on g5 and black's king is on g8, this white knight adds 2
     // to kingAttacksCount[WHITE].
     int kingAttacksCount[COLOR_NB];
-
-    int trappedRookCount[COLOR_NB] = {0, 0};
   };
 
 
@@ -376,12 +374,12 @@ namespace {
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
-                File kf = file_of(pos.square<KING>(Us));
-                //Penalty for other side trapped rook along with king side
-                if ((kf < FILE_E) == (file_of(s) < kf) || (kf != FILE_E && mob <= 1))
+                //Penalty for other side trapped rook along with king side if on rank1
+                if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
                 {
-                    score -= TrappedRook * (1 + !pos.castling_rights(Us));
-                    trappedRookCount[Us] += 1;
+                    File kf = file_of(pos.square<KING>(Us));
+					if ((kf < FILE_E) == (file_of(s) < kf) || (kf != FILE_E && mob <= 1))
+						score -= TrappedRook * (1 + !pos.castling_rights(Us));
                 }
             }
         }
@@ -501,14 +499,6 @@ namespace {
 
     // Penalty if king flank is under attack, potentially moving toward the king
     score -= FlankAttacks * kingFlankAttacks;
-
- 	if (trappedRookCount[Us] > 0)
-	{
-		int kingMob = popcount(attackedBy[Us][KING] & ~(pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]));
-		//Penalty if king mobility is less
-		if(kingMob <= 1)
-			score -= TrappedRook;
-	}
 
     if (T)
         Trace::add(KING, Us, score);
