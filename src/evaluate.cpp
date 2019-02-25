@@ -339,7 +339,7 @@ namespace {
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
-    int pct = 0;
+    int pct = 0, penalty = 0;
     Score score = SCORE_ZERO;
 
     for (Square s = *pl; s != SQ_NONE; s = *++pl)
@@ -423,8 +423,10 @@ namespace {
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
                     // Even bigger penalty if our king has no prospect
                     // of moving out of the way
-                    if (mobilityValues[Us][KING][0] <= 0 && mob <=2)
+                    if (mobilityValues[Us][KING][0] <= 0 && mob <=2 && penalty == 0) {
                         score -= TrappedRook;
+                        penalty += 1 ; // restricting penalty to one trapped rook
+                    }
                 }
             }
         }
