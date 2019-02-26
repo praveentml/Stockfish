@@ -508,16 +508,6 @@ namespace {
 			if (pos.blockers_for_king(Us) & s)
 				b &= LineBB[pos.square<KING>(Us)][s];
 
-			attackedBy2[Us] |= attackedBy[Us][ALL_PIECES] & b;
-	        attackedBy[Us][Pt] |= b;
-	        attackedBy[Us][ALL_PIECES] |= b;
-
-	        if (b & kingRing[Them])
-	        {
-	            kingAttackersCount[Us]++;
-	            kingAttackersWeight[Us] += KingAttackWeights[Pt];
-	            kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
-	        }
 		    int kingMobility = popcount(attackedBy[Us][KING] & ~pos.pieces(Us) & ~attackedBy[Them][ALL_PIECES]);
 			int rookMobility = popcount( b & mobilityArea[Us]);
 
@@ -526,7 +516,7 @@ namespace {
 				File kf = file_of(pos.square<KING>(Us));
 					if ((kf < FILE_E) == (file_of(s) < kf))
 					{
-						(rookMobility <= 1) ? score -= TrappedRook * (2 + !pos.castling_rights(Us)) : score -= TrappedRook * (1 + !pos.castling_rights(Us));
+						score -= TrappedRook * (1 + !pos.castling_rights(Us));
 						// Even bigger penalty if our king has no prospect
 						// of moving out of the way
 						if (kingMobility <= 0)
@@ -535,6 +525,8 @@ namespace {
 						if((relative_rank(Us, pos.square<KING>(Us)) == RANK_1) && (relative_rank(Us, pos.square<ROOK>(Us)) == RANK_1))
 							score -= TrappedRook;
 					}
+					else if(kf != FILE_E && rookMobility <=1)
+						score -= TrappedRook;
 			}
 		}
         if (T)
