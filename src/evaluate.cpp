@@ -366,6 +366,11 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Penalty if any relative pin or discovered attack against the rook
+            Bitboard rookPinners;
+            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners))
+                score -= TrappedRook;
         }
 
         if (Pt == QUEEN)
