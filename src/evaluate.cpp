@@ -369,7 +369,7 @@ namespace {
 
             // Penalty if any relative pin or discovered attack against the rook
             Bitboard rookPinners;
-            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners))
+            if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, rookPinners))
                 score -= TrappedRook;
         }
 
