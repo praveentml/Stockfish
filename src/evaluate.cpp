@@ -301,14 +301,6 @@ namespace {
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
-        if (Pt == BISHOP || Pt == KNIGHT || Pt == ROOK)
-        {
-			// Penalty if any relative pin or discovered attack against the piece
-			Bitboard pinners;
-			if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, pinners))
-				score -= TrappedRook;
-        }
-
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus if piece is on an outpost square or can reach one
@@ -374,6 +366,11 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Penalty if any relative pin or discovered attack against the piece
+			Bitboard rookPinners;
+			if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP, QUEEN), s, rookPinners))
+				score -= TrappedRook;
         }
 
         if (Pt == QUEEN)
