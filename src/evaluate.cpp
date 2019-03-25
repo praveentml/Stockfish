@@ -301,6 +301,11 @@ namespace {
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
+        // Penalty if any relative pin or discovered attack against the piece
+        Bitboard pinners;
+        if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, pinners))
+            score -= TrappedRook;
+
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus if piece is on an outpost square or can reach one
