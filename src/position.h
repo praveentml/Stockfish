@@ -88,7 +88,6 @@ public:
   Bitboard pieces(Color c) const;
   Bitboard pieces(Color c, PieceType pt) const;
   Bitboard pieces(Color c, PieceType pt1, PieceType pt2) const;
-  Bitboard pieces(Color c, PieceType pt1, PieceType pt2, PieceType pt3) const;
   Piece piece_on(Square s) const;
   Square ep_square() const;
   bool empty(Square s) const;
@@ -238,10 +237,6 @@ inline Bitboard Position::pieces(Color c, PieceType pt) const {
 
 inline Bitboard Position::pieces(Color c, PieceType pt1, PieceType pt2) const {
   return byColorBB[c] & (byTypeBB[pt1] | byTypeBB[pt2]);
-}
-
-inline Bitboard Position::pieces(Color c, PieceType pt1, PieceType pt2, PieceType pt3) const {
-  return byColorBB[c] & (byTypeBB[pt1] | byTypeBB[pt2] | byTypeBB[pt3]);
 }
 
 template<PieceType Pt> inline int Position::count(Color c) const {
