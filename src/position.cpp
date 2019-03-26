@@ -518,6 +518,41 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
   return blockers;
 }
 
+/// Position::slider_blockers() returns a bitboard of all the pieces (both colors)
+/// that are blocking attacks on the square 's' from 'sliders'. A piece blocks a
+/// slider if removing that piece from the board would result in a position where
+/// square 's' is attacked. For example, a king-attack blocking piece can be either
+/// a pinned or a discovered check piece, according if its color is the opposite
+/// or the same of the color of the slider.
+
+Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners, PieceType pt) const {
+
+  Bitboard blockers = 0, snipers = 0;
+  pinners = 0;
+
+  // Snipers are sliders that attack 's' when a piece and other snipers are removed
+  if(pt == ROOK)
+	  snipers = (  (PseudoAttacks[  ROOK][s] & pieces(ROOK))
+                      | (PseudoAttacks[BISHOP][s] & pieces(BISHOP))) & sliders;
+  else
+	  snipers = (  (PseudoAttacks[  ROOK][s] & pieces(QUEEN, ROOK))
+	                        | (PseudoAttacks[BISHOP][s] & pieces(QUEEN, BISHOP))) & sliders;
+  Bitboard occupancy = pieces() & ~snipers;
+
+  while (snipers)
+  {
+    Square sniperSq = pop_lsb(&snipers);
+    Bitboard b = between_bb(s, sniperSq) & occupancy;
+
+    if (b && !more_than_one(b))
+    {
+        blockers |= b;
+        if (b & pieces(color_of(piece_on(s))))
+            pinners |= sniperSq;
+    }
+  }
+  return blockers;
+}
 
 /// Position::attackers_to() computes a bitboard of all pieces which attack a
 /// given square. Slider attacks use the occupied bitboard to indicate occupancy.
