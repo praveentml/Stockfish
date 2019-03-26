@@ -371,7 +371,10 @@ namespace {
             // Penalty if any relative pin or discovered attack against the rook
 			Bitboard rookPinners;
 			if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, rookPinners, Pt))
-				score -= SliderPenalty;
+			{
+				if(pos.piece_on(s) == make_piece(Us, ROOK) || pos.piece_on(s) == make_piece(Us, BISHOP))
+					score -= SliderPenalty;
+			}
         }
 
         if (Pt == QUEEN)
