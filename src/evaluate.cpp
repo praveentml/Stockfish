@@ -531,7 +531,7 @@ namespace {
                 score += ThreatByRank * (int)relative_rank(Them, s);
         }
 
-        b = weak & attackedBy[Us][ROOK];
+        b = weak & (attackedBy[Us][ROOK] | attackedBy[Us][QUEEN]);
         while (b)
         {
             Square s = pop_lsb(&b);
