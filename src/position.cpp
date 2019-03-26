@@ -485,7 +485,6 @@ const string Position::fen() const {
   return ss.str();
 }
 
-
 /// Position::slider_blockers() returns a bitboard of all the pieces (both colors)
 /// that are blocking attacks on the square 's' from 'sliders'. A piece blocks a
 /// slider if removing that piece from the board would result in a position where
@@ -499,8 +498,48 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
   pinners = 0;
 
   // Snipers are sliders that attack 's' when a piece and other snipers are removed
-  Bitboard snipers = (  (PseudoAttacks[  ROOK][s] & pieces(QUEEN, ROOK))
-                      | (PseudoAttacks[BISHOP][s] & pieces(QUEEN, BISHOP))) & sliders;
+  Bitboard snipers = ((PseudoAttacks[  ROOK][s] & pieces(QUEEN, ROOK))
+	                      | (PseudoAttacks[BISHOP][s] & pieces(QUEEN, BISHOP))) & sliders;
+
+  Bitboard occupancy = pieces() & ~snipers;
+
+  while (snipers)
+  {
+    Square sniperSq = pop_lsb(&snipers);
+    Bitboard b = between_bb(s, sniperSq) & occupancy;
+
+    if (b && !more_than_one(b))
+    {
+        blockers |= b;
+        if (b & pieces(color_of(piece_on(s))))
+            pinners |= sniperSq;
+    }
+  }
+  return blockers;
+}
+
+/// Position::slider_blockers() returns a bitboard of all the pieces (both colors)
+/// that are blocking attacks on the square 's' from 'sliders'. A piece blocks a
+/// slider if removing that piece from the board would result in a position where
+/// square 's' is attacked. For example, a king-attack blocking piece can be either
+/// a pinned or a discovered check piece, according if its color is the opposite
+/// or the same of the color of the slider.
+
+Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners, PieceType Pt) const {
+
+  Bitboard blockers = 0, snipers = 0;
+  pinners = 0;
+
+  // Snipers are sliders that attack 's' when a piece and other snipers are removed
+  if (Pt == ROOK)
+  {
+	  snipers = ((PseudoAttacks[  ROOK][s]) | (PseudoAttacks[BISHOP][s])) & sliders;
+  }
+  else if (Pt == QUEEN)
+  {
+	  snipers = ((PseudoAttacks[  ROOK][s] & pieces(QUEEN, ROOK))
+	                      | (PseudoAttacks[BISHOP][s] & pieces(QUEEN, BISHOP))) & sliders;
+  }
   Bitboard occupancy = pieces() & ~snipers;
 
   while (snipers)
