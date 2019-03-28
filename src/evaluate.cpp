@@ -649,7 +649,7 @@ namespace {
 
                 bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN) & pos.attacks_from<ROOK>(s);
 
-                // defended squares by Us in enemy pawn promotion
+                // defended squares by Us in our pawn promotion
                 if (!(pos.pieces(Us) & bb))
                     defendedSquares &= attackedBy[Us][ALL_PIECES] | pos.pieces(Us);
 
@@ -665,7 +665,7 @@ namespace {
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
                     k += 6;
-                else if (defendedSquares & pos.pieces(Us, KNIGHT, BISHOP))
+                else if ((defendedSquares & pos.pieces(Us, KNIGHT, BISHOP)) || (defendedSquares & pos.pieces(Us, ROOK, QUEEN)))
                 	k += 5;
                 else if (defendedSquares & blockSq)
                     k += 4;
