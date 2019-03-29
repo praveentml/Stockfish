@@ -650,7 +650,7 @@ namespace {
                 bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN) & pos.attacks_from<ROOK>(s);
 
                 if (!(pos.pieces(Us) & bb))
-                    defendedSquares &= attackedBy[Us][ALL_PIECES];
+                    defendedSquares &= attackedBy[Us][ALL_PIECES] | pos.pieces(Us);
 
                 if (!(pos.pieces(Them) & bb))
                     unsafeSquares &= attackedBy[Them][ALL_PIECES] | pos.pieces(Them);
@@ -662,10 +662,11 @@ namespace {
                 // If the path to the queen is fully defended, assign a big bonus.
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
-                    k += 6;
-
+                    k += 9;
+                else if (defendedSquares & pos.pieces(Us, KNIGHT, BISHOP))
+                    k += 8;
                 else if (defendedSquares & blockSq)
-                    k += 4;
+                    k += 7;
 
                 bonus += make_score(k * w, k * w);
             }
