@@ -662,11 +662,11 @@ namespace {
                 // If the path to the queen is fully defended, assign a big bonus.
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
-                    k += 9;
-                else if (defendedSquares & pos.pieces(Us, KNIGHT, BISHOP))
                     k += 8;
-                else if (defendedSquares & blockSq)
+                else if (defendedSquares & pos.pieces(Us, KNIGHT, BISHOP))
                     k += 7;
+                else if (defendedSquares & blockSq)
+                    k += 6;
 
                 bonus += make_score(k * w, k * w);
             }
