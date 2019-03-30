@@ -664,7 +664,7 @@ namespace {
                 if (defendedSquares == squaresToQueen)
                     k += 8;
                 else if (defendedSquares & pos.pieces(Us, KNIGHT, BISHOP))
-                    k += 7;
+                    k += 6;
                 else if (defendedSquares & blockSq)
                     k += 5;
 
