@@ -664,9 +664,9 @@ namespace {
                 if (defendedSquares == squaresToQueen)
                     k += 8;
                 else if (defendedSquares & pos.pieces(Us, KNIGHT, BISHOP))
-                    k += 6;
+                    k += 7;
                 else if (defendedSquares & blockSq)
-                    k += 5;
+                    k += 7;
 
                 bonus += make_score(k * w, k * w);
             }
