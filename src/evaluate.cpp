@@ -666,7 +666,7 @@ namespace {
                 else if (defendedSquares & pos.pieces(Us, KNIGHT, BISHOP))
                     k += 8;
                 else if (defendedSquares & blockSq)
-                    k += 5;
+                    k += 6;
 
                 bonus += make_score(k * w, k * w);
             }
