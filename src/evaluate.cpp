@@ -503,7 +503,7 @@ namespace {
     constexpr Direction Up       = (Us == WHITE ? NORTH   : SOUTH);
     constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB : Rank6BB);
 
-    Bitboard b, b1, weak, defended, nonPawnEnemies, stronglyProtected, pinners, safe;
+    Bitboard b, weak, defended, nonPawnEnemies, stronglyProtected, safe;
     Score score = SCORE_ZERO;
 
     // Non-pawn enemies
@@ -516,16 +516,6 @@ namespace {
 
     // Non-pawn enemies, strongly protected
     defended = nonPawnEnemies & stronglyProtected;
-
-    b1 = pos.pieces(Them);
-	while (b1)
-	{
-		Square s = pop_lsb(&b1);
-		if ((s == pos.square<ROOK>(Them)) && pos.slider_blockers(pos.pieces(Us, BISHOP), s, pinners))
-			{
-				score += ((ThreatByMinor[type_of(pos.piece_on(s))] + (ThreatByRank * (int)relative_rank(Them, s))) / 2);
-			}
-	}
 
     // Enemies not strongly protected and under our attack
     weak = pos.pieces(Them) & ~stronglyProtected & attackedBy[Us][ALL_PIECES];
