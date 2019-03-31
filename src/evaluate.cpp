@@ -513,10 +513,22 @@ namespace {
     while (b1)
     {
         Square s = pop_lsb(&b1);
-        indirectProtected = pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, pinners);
-        indirectMinorAttack = pos.slider_blockers(pos.pieces(Us, BISHOP), s, pinners);
-        indirectRookAttack = pos.slider_blockers(pos.pieces(Us, ROOK), s, pinners);
+        if (s == pos.square<QUEEN>(Them) || s == pos.square<ROOK>(Them))
+        {
+        	if (pos.slider_blockers(pos.pieces(Us, BISHOP), s, pinners))
+        		indirectMinorAttack |= s;
+        	if (pos.slider_blockers(pos.pieces(Us, ROOK), s, pinners))
+                indirectRookAttack |= s;
+        }
+        if (s == pos.square<QUEEN>(Us) || s == pos.square<ROOK>(Us))
+        {
+        	if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, pinners))
+        		indirectProtected |= s;
+        }
     }
+
+    if(popcount(indirectProtected) > 0)
+    	score -= SliderOnQueen * popcount(indirectProtected);
 
     // Non-pawn enemies, strongly protected
     defended = nonPawnEnemies & stronglyProtected;
