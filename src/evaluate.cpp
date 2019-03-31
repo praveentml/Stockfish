@@ -498,7 +498,7 @@ namespace {
     constexpr Direction Up       = (Us == WHITE ? NORTH   : SOUTH);
     constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB : Rank6BB);
 
-    Bitboard b, weak, defended, nonPawnEnemies, stronglyProtected, safe;
+    Bitboard b, b1, weak, defended, nonPawnEnemies, stronglyProtected, indirectProtected = 0, indirectAttacked = 0, pinners, safe;
     Score score = SCORE_ZERO;
 
     // Non-pawn enemies
@@ -509,14 +509,22 @@ namespace {
     stronglyProtected =  attackedBy[Them][PAWN]
                        | (attackedBy2[Them] & ~attackedBy2[Us]);
 
+    b1 = attackedBy[Them][ALL_PIECES] & attackedBy[Us][ALL_PIECES] & pos.pieces(Them) & pos.pieces(Us);
+    while (b1)
+    {
+        Square s = pop_lsb(&b1);
+        indirectProtected = pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, pinners);
+        indirectAttacked = pos.slider_blockers(pos.pieces(Us, ROOK, BISHOP), s, pinners);
+    }
+
     // Non-pawn enemies, strongly protected
     defended = nonPawnEnemies & stronglyProtected;
 
     // Enemies not strongly protected and under our attack
-    weak = pos.pieces(Them) & ~stronglyProtected & attackedBy[Us][ALL_PIECES];
+    weak = pos.pieces(Them) & ~stronglyProtected & attackedBy[Us][ALL_PIECES] & indirectAttacked;
 
     // Safe or protected squares
-    safe = ~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES] | ~defended;
+    safe = (~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES]) & ~indirectProtected;
 
     // Bonus according to the kind of attacking pieces
     if (defended | weak)
