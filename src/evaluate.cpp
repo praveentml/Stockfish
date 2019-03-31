@@ -270,7 +270,7 @@ namespace {
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
 
-    Bitboard b, bb;
+    Bitboard b, bb, pinners;
     Score score = SCORE_ZERO;
 
     attackedBy[Us][Pt] = 0;
@@ -365,6 +365,15 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            if ((s == pos.square<ROOK>(Them)) && pos.slider_blockers(pos.pieces(Us, BISHOP), s, pinners))
+            {
+                score += ((ThreatByMinor[type_of(pos.piece_on(s))] + (ThreatByRank * (int)relative_rank(Them, s))) / 2);
+            }
+            if ((s == pos.square<ROOK>(Us)) && pos.slider_blockers(pos.pieces(Them, BISHOP), s, pinners))
+			{
+				score -= ((ThreatByMinor[type_of(pos.piece_on(s))] + (ThreatByRank * (int)relative_rank(Us, s))) / 2);
+			}
         }
 
         if (Pt == QUEEN)
@@ -498,7 +507,7 @@ namespace {
     constexpr Direction Up       = (Us == WHITE ? NORTH   : SOUTH);
     constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB : Rank6BB);
 
-    Bitboard b, b1, weak, defended, nonPawnEnemies, stronglyProtected, indirectProtected = 0, indirectRookAttack = 0, indirectMinorAttack = 0, pinners, safe;
+    Bitboard b, weak, defended, nonPawnEnemies, stronglyProtected, safe;
     Score score = SCORE_ZERO;
 
     // Non-pawn enemies
@@ -509,35 +518,14 @@ namespace {
     stronglyProtected =  attackedBy[Them][PAWN]
                        | (attackedBy2[Them] & ~attackedBy2[Us]);
 
-    b1 = attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES] | pos.pieces(Them) | pos.pieces(Us);
-    while (b1)
-    {
-        Square s = pop_lsb(&b1);
-        if (s == pos.square<QUEEN>(Them) || s == pos.square<ROOK>(Them))
-        {
-        	if (pos.slider_blockers(pos.pieces(Us, BISHOP), s, pinners))
-        			indirectMinorAttack |= s;
-        	if (pos.slider_blockers(pos.pieces(Us, ROOK), s, pinners))
-                	indirectRookAttack |= s;
-        }
-        if (s == pos.square<QUEEN>(Us) || s == pos.square<ROOK>(Us))
-        {
-        	if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, pinners))
-        			indirectProtected |= s;
-        }
-    }
-
-    if(popcount(indirectProtected) > 0)
-    	score -= SliderOnQueen * popcount(indirectProtected);
-
     // Non-pawn enemies, strongly protected
     defended = nonPawnEnemies & stronglyProtected;
 
     // Enemies not strongly protected and under our attack
-    weak = pos.pieces(Them) & ~stronglyProtected & (attackedBy[Us][ALL_PIECES] | indirectMinorAttack | indirectRookAttack);
+    weak = pos.pieces(Them) & ~stronglyProtected & attackedBy[Us][ALL_PIECES];
 
     // Safe or protected squares
-    safe = (~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES]) & ~indirectProtected;
+    safe = ~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES];
 
     // Bonus according to the kind of attacking pieces
     if (defended | weak)
