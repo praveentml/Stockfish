@@ -530,7 +530,7 @@ namespace {
     // Bonus according to the kind of attacking pieces
     if (defended | weak)
     {
-        b = (defended | weak) & (attackedBy[Us][KNIGHT] | attackedBy[Us][BISHOP] | indirectMinorAttack);
+        b = (defended | weak) & (attackedBy[Us][KNIGHT] | attackedBy[Us][BISHOP]);
         while (b)
         {
             Square s = pop_lsb(&b);
@@ -539,11 +539,7 @@ namespace {
                 score += ThreatByRank * (int)relative_rank(Them, s);
         }
 
-        // Half bonus for indirect attacks
-        if( weak & indirectMinorAttack)
-        	score = score / 2 ;
-
-        b = weak & (attackedBy[Us][ROOK] | indirectRookAttack);
+        b = weak & attackedBy[Us][ROOK];
         while (b)
         {
             Square s = pop_lsb(&b);
@@ -551,10 +547,6 @@ namespace {
             if (type_of(pos.piece_on(s)) != PAWN)
                 score += ThreatByRank * (int)relative_rank(Them, s);
         }
-
-        // Half bonus for indirect attacks
-        if( weak & indirectRookAttack)
-        	score = score / 2 ;
 
         if (weak & attackedBy[Us][KING])
             score += ThreatByKing;
