@@ -498,7 +498,7 @@ namespace {
     constexpr Direction Up       = (Us == WHITE ? NORTH   : SOUTH);
     constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB : Rank6BB);
 
-    Bitboard b, b1, weak, defended, nonPawnEnemies, stronglyProtected, indirectProtected = 0, indirectAttacked = 0, pinners, safe;
+    Bitboard b, b1, weak, defended, nonPawnEnemies, stronglyProtected, indirectProtected = 0, indirectRookAttack = 0, indirectMinorAttack = 0, pinners, safe;
     Score score = SCORE_ZERO;
 
     // Non-pawn enemies
@@ -509,19 +509,20 @@ namespace {
     stronglyProtected =  attackedBy[Them][PAWN]
                        | (attackedBy2[Them] & ~attackedBy2[Us]);
 
-    b1 = attackedBy[Them][ALL_PIECES] & attackedBy[Us][ALL_PIECES] & pos.pieces(Them) & pos.pieces(Us);
+    b1 = attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES] | pos.pieces(Them) | pos.pieces(Us);
     while (b1)
     {
         Square s = pop_lsb(&b1);
         indirectProtected = pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, pinners);
-        indirectAttacked = pos.slider_blockers(pos.pieces(Us, ROOK, BISHOP), s, pinners);
+        indirectMinorAttack = pos.slider_blockers(pos.pieces(Us, BISHOP), s, pinners);
+        indirectRookAttack = pos.slider_blockers(pos.pieces(Us, ROOK), s, pinners);
     }
 
     // Non-pawn enemies, strongly protected
     defended = nonPawnEnemies & stronglyProtected;
 
     // Enemies not strongly protected and under our attack
-    weak = pos.pieces(Them) & ~stronglyProtected & attackedBy[Us][ALL_PIECES] & indirectAttacked;
+    weak = pos.pieces(Them) & ~stronglyProtected & (attackedBy[Us][ALL_PIECES] | indirectMinorAttack | indirectRookAttack);
 
     // Safe or protected squares
     safe = (~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES]) & ~indirectProtected;
@@ -529,7 +530,7 @@ namespace {
     // Bonus according to the kind of attacking pieces
     if (defended | weak)
     {
-        b = (defended | weak) & (attackedBy[Us][KNIGHT] | attackedBy[Us][BISHOP]);
+        b = (defended | weak) & (attackedBy[Us][KNIGHT] | attackedBy[Us][BISHOP] | indirectMinorAttack);
         while (b)
         {
             Square s = pop_lsb(&b);
@@ -538,7 +539,11 @@ namespace {
                 score += ThreatByRank * (int)relative_rank(Them, s);
         }
 
-        b = weak & attackedBy[Us][ROOK];
+        // Half bonus for indirect attacks
+        if( weak & indirectMinorAttack)
+        	score = score / 2 ;
+
+        b = weak & (attackedBy[Us][ROOK] | indirectRookAttack);
         while (b)
         {
             Square s = pop_lsb(&b);
@@ -546,6 +551,10 @@ namespace {
             if (type_of(pos.piece_on(s)) != PAWN)
                 score += ThreatByRank * (int)relative_rank(Them, s);
         }
+
+        // Half bonus for indirect attacks
+        if( weak & indirectRookAttack)
+        	score = score / 2 ;
 
         if (weak & attackedBy[Us][KING])
             score += ThreatByKing;
