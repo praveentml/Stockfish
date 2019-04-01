@@ -152,8 +152,8 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-  int rookSliderCofficient = 30;
-  TUNE(SetRange(30, 70),rookSliderCofficient);
+  int rookSliderCofficient = 1;
+  TUNE(SetRange(0, 1), rookSliderCofficient);
 
 #undef S
 
@@ -370,7 +370,7 @@ namespace {
 
             if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, pinners))
 			{
-				score -= (((ThreatByMinor[ROOK] + (ThreatByRank * (int)relative_rank(Us, s))) * rookSliderCofficient) / 100);
+				score -= (((ThreatByMinor[ROOK] + (ThreatByRank * (int)relative_rank(Us, s))) * rookSliderCofficient));
 			}
         }
 
