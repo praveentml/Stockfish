@@ -152,6 +152,8 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  int rookSliderCofficient = 30;
+  TUNE(SetRange(30, 70),rookSliderCofficient);
 
 #undef S
 
@@ -270,7 +272,7 @@ namespace {
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
 
-    Bitboard b, bb;
+    Bitboard b, bb, pinners;
     Score score = SCORE_ZERO;
 
     attackedBy[Us][Pt] = 0;
@@ -365,6 +367,11 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, pinners))
+			{
+				score -= (((ThreatByMinor[ROOK] + (ThreatByRank * (int)relative_rank(Us, s))) * rookSliderCofficient) / 100);
+			}
         }
 
         if (Pt == QUEEN)
