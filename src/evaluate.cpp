@@ -368,7 +368,7 @@ namespace {
 
             if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, pinners))
 			{
-				score -= (((ThreatByMinor[ROOK] + (ThreatByRank * (int)relative_rank(Us, s))) * 2) / 3);
+				score -= (((ThreatByMinor[ROOK] + (ThreatByRank * (int)relative_rank(Us, s))) * 31) / 100);
 			}
         }
 
