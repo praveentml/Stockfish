@@ -152,8 +152,8 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-  int rookSliderCofficient = 30;
-  TUNE(SetRange(-200, 200), rookSliderCofficient);
+  constexpr int rookSliderCofficient = 46;
+
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
