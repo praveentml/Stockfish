@@ -393,7 +393,7 @@ namespace {
     constexpr Bitboard Camp = (Us == WHITE ? AllSquares ^ Rank6BB ^ Rank7BB ^ Rank8BB
                                            : AllSquares ^ Rank1BB ^ Rank2BB ^ Rank3BB);
 
-    Bitboard weak, b1, b2, safe, unsafeChecks = 0;
+    Bitboard weak, b1, b2, safe, unsafeChecks = 0, pinners;
     Bitboard rookChecks, queenChecks, bishopChecks, knightChecks;
     int kingDanger = 0;
     const Square ksq = pos.square<KING>(Us);
@@ -405,6 +405,14 @@ namespace {
     weak =  attackedBy[Them][ALL_PIECES]
           & ~attackedBy2[Us]
           & (~attackedBy[Us][ALL_PIECES] | attackedBy[Us][KING] | attackedBy[Us][QUEEN]);
+
+	b1 = pos.pieces(Us);
+	while (b1)
+	{
+		Square s = pop_lsb(&b1);
+		if ((s == ksq) && pos.slider_blockers(pos.pieces(Us, QUEEN,ROOK,BISHOP), s, pinners))
+			weak |= s;
+	}
 
     // Analyse the safe enemy's checks which are possible on next move
     safe  = ~pos.pieces(Them);
@@ -447,7 +455,7 @@ namespace {
     // Enemy knights checks
     knightChecks = pos.attacks_from<KNIGHT>(ksq) & attackedBy[Them][KNIGHT];
 
-    if (knightChecks & safe & ~attackedBy[Us][KNIGHT])
+    if (knightChecks & safe)
         kingDanger += KnightSafeCheck;
     else
         unsafeChecks |= knightChecks;
