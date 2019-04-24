@@ -444,7 +444,7 @@ namespace {
     else
         unsafeChecks |= b2 & attackedBy[Them][BISHOP];
 
-    if(popcount(attackedBy[Them][BISHOP] & kingRing[Us]) > 0)
+    if(attackedBy[Them][BISHOP] & kingRing[Us])
     	kingDanger += BishopSafeCheck / 2;
 
     // Enemy knights checks
