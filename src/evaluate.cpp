@@ -441,6 +441,8 @@ namespace {
 
     if (bishopChecks)
         kingDanger += BishopSafeCheck;
+    else if(popcount(b2 & kingRing[Us]) > 0)
+    	kingDanger += BishopSafeCheck / 2;
     else
         unsafeChecks |= b2 & attackedBy[Them][BISHOP];
 
