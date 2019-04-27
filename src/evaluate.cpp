@@ -323,7 +323,7 @@ namespace {
             score -= KingProtector * distance(s, pos.square<KING>(Us));
 
             // Penalty for trapped knight
-            if(Pt == KNIGHT && mob <= 2)
+            if(Pt == KNIGHT && mob <= 3)
             {
             	if(file_of(s) != FILE_A && file_of(s) != FILE_H && s != relative_square(Us, SQ_B1) && s != relative_square(Us, SQ_G1))
             		score += MobilityBonus[KNIGHT - 2][mob];
