@@ -150,7 +150,6 @@ namespace {
   constexpr Score ThreatByRank       = S( 13,  0);
   constexpr Score ThreatBySafePawn   = S(173, 94);
   constexpr Score TrappedRook        = S( 47,  4);
-  constexpr Score TrappedKnight      = S( 35,  7);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
 
@@ -326,8 +325,8 @@ namespace {
             // Penalty for trapped knight
             if(Pt == KNIGHT && mob <= 2)
             {
-            	if(file_of(s) != FILE_A && file_of(s) != FILE_H)
-            		score -= TrappedKnight;
+            	if(file_of(s) != FILE_A && file_of(s) != FILE_H && (s == relative_square(Us, SQ_B1) || s == relative_square(Us, SQ_G1)))
+            		score += MobilityBonus[KNIGHT - 2][mob];
             }
 
             if (Pt == BISHOP)
