@@ -322,6 +322,13 @@ namespace {
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
 
+            // Penalty for trapped knight
+			if(Pt == KNIGHT && mob <= 3)
+			{
+				if((OutpostRanks & s) || (file_of(s) != FILE_A && file_of(s) != FILE_H && s != relative_square(Us, SQ_B1) && s != relative_square(Us, SQ_G1)))
+					score += MobilityBonus[KNIGHT - 2][mob];
+			}
+
             if (Pt == BISHOP)
             {
                 // Penalty according to number of pawns on the same color square as the
