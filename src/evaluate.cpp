@@ -485,7 +485,7 @@ namespace {
 
     // Penalty if king is not active when enemy king is
     if(rank_of(ksq) == RANK_1 && (rank_of(pos.square<KING>(Them)) != RANK_8 && ~attackedBy[Us][ALL_PIECES]))
-    score -= KingProtector / 2;
+    score -= KingProtector;
 
     // Penalty if king flank is under attack, potentially moving toward the king
     score -= FlankAttacks * kingFlankAttacks;
