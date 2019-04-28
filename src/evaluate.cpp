@@ -152,6 +152,9 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  int A=0, B=0;
+  Score KingMobPenalty      = S(  A,  B);
+  TUNE(SetRange(-100,100),A,B);
 
 #undef S
 
@@ -478,6 +481,10 @@ namespace {
     // Transform the kingDanger units into a Score, and subtract it from the evaluation
     if (kingDanger > 100)
         score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
+
+    // Penalty if king is not active when enemy king is
+    if(relative_rank(Us, ksq) == RANK_1 && relative_rank(Them, pos.square<KING>(Them)) != RANK_8)
+    	score -= KingMobPenalty;
 
     // Penalty when our king is on a pawnless flank
     if (!(pos.pieces(PAWN) & KingFlank[file_of(ksq)]))
