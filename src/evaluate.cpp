@@ -485,7 +485,7 @@ namespace {
 
     // Penalty if king is not active when enemy king is
     if(relative_rank(Us, ksq) == RANK_1 && relative_rank(Them, pos.square<KING>(Them)) != RANK_8)
-    	score -= KingProtector / 3;
+    	score -= KingProtector;
 
     // Penalty if king flank is under attack, potentially moving toward the king
     score -= FlankAttacks * kingFlankAttacks;
