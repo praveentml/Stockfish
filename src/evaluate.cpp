@@ -153,7 +153,7 @@ namespace {
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
   Score KingMobPenalty      = S(  0,  0);
-  TUNE(SetRange(-100,100), KingMobPenalty);
+  TUNE(SetRange(0,100), KingMobPenalty);
 
 #undef S
 
