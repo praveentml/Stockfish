@@ -614,8 +614,9 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
+    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares, neighbours, support;
     Score score = SCORE_ZERO;
+    bool isolatedPawns = false;
 
     b = pe->passed_pawns(Us);
 
@@ -634,8 +635,25 @@ namespace {
             int w = (r-2) * (r-2) + 2;
             Square blockSq = s + Up;
 
+            Bitboard ourPawns   = pos.pieces(  Us, PAWN);
+			neighbours = ourPawns   & adjacent_files_bb(file_of(s));
+			support    = neighbours & rank_bb(s - Up);
+			if (!neighbours && !support)
+			{
+				bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
+										- king_proximity(Us,   blockSq) * 4) * w);
+				isolatedPawns = true;
+			}
+			else if (!neighbours)
+			{
+				bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
+										- king_proximity(Us,   blockSq) * 3) * w);
+				isolatedPawns = true;
+			}
+
             // Adjust bonus based on the king's proximity
-            bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
+            if(!isolatedPawns)
+            	bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
                                     - king_proximity(Us,   blockSq) * 2) * w);
 
             // If blockSq is not the queening square then consider also a second push
