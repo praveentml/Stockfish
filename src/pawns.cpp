@@ -38,6 +38,8 @@ namespace {
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 13, 17, 24, 59, 96, 171 };
+  int safetyval1 = 374,safetyval2 = 5,safetypenal1 = 66;
+  TUNE(SetRange(174, 574), safetyval1, SetRange(0, 100), safetyval2, SetRange(0, 130), safetypenal1);
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -183,7 +185,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5);
+  Value safety = (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(safetyval1) : Value(safetyval2);
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -196,7 +198,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
-      safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
+      safety -= (ourRank && (ourRank == theirRank - 1)) ? safetypenal1 * ((theirRank == RANK_3) || (theirRank == RANK_4 && theirRank == (relative_rank(Us, ksq) + 2)))
                                                         : UnblockedStorm[d][theirRank];
   }
 
