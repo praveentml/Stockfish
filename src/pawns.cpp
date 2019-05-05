@@ -183,7 +183,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5);
+  Value safety = (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(368) : Value(6);
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -196,7 +196,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
-      safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * ((theirRank == RANK_3) || (theirRank == RANK_4 && theirRank == (relative_rank(Us, ksq) + 2)))
+      safety -= (ourRank && (ourRank == theirRank - 1)) ? 67 * ((theirRank == RANK_3) || (theirRank == RANK_4 && theirRank == (relative_rank(Us, ksq) + 2)))
                                                         : UnblockedStorm[d][theirRank];
   }
 
