@@ -394,7 +394,7 @@ namespace {
 
     Bitboard weak, b1, b2, safe, unsafeChecks = 0;
     Bitboard rookChecks, queenChecks, bishopChecks, knightChecks;
-    int kingDanger = 0;
+    int kingDanger = 0, enemyKnightCount = 0, ownknightCount = 0;
     const Square ksq = pos.square<KING>(Us);
 
     // Init the score with king shelter and enemy pawns storm
@@ -445,6 +445,35 @@ namespace {
 
     // Enemy knights checks
     knightChecks = pos.attacks_from<KNIGHT>(ksq) & attackedBy[Them][KNIGHT];
+
+    if(file_of(ksq) & KingSide)
+    {
+    	  for (Rank r = RANK_8; r >= RANK_1; --r)
+    	  {
+    		  for (File f = FILE_E; f <= FILE_H; ++f)
+    		  {
+    			  if(pos.piece_on(make_square(f, r)) == make_piece(Us, KNIGHT))
+    				  ownknightCount ++;
+    			  if(pos.piece_on(make_square(f, r)) == make_piece(Them, KNIGHT))
+    				  enemyKnightCount ++;
+    		  }
+    	  }
+    }
+    else if(file_of(ksq) & QueenSide)
+    {
+    	  for (Rank r = RANK_8; r >= RANK_1; --r)
+    	  {
+    		  for (File f = FILE_A; f <= FILE_D; ++f)
+    		  {
+    			  if(pos.piece_on(make_square(f, r)) == make_piece(Us, KNIGHT))
+    				  ownknightCount ++;
+    			  if(pos.piece_on(make_square(f, r)) == make_piece(Them, KNIGHT))
+    				  enemyKnightCount ++;
+    		  }
+    	  }
+    }
+    if(enemyKnightCount > ownknightCount)
+    	score -= FlankAttacks * (enemyKnightCount - ownknightCount);
 
     if (knightChecks & safe)
         kingDanger += KnightSafeCheck;
