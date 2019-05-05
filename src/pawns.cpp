@@ -196,7 +196,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
-      safety -= (ourRank && (ourRank == theirRank - 1)) ? 67 * ((theirRank == RANK_3) || (theirRank == RANK_4 && theirRank == (relative_rank(Us, ksq) + 2)))
+      safety -= (ourRank && (ourRank == theirRank - 1)) ? 67 * ((theirRank == RANK_3) || (theirRank == RANK_4 && relative_rank(Us, ksq) == RANK_2))
                                                         : UnblockedStorm[d][theirRank];
   }
 
