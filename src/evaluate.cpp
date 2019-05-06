@@ -473,7 +473,7 @@ namespace {
     	  }
     }
     if(enemyKnightCount > ownknightCount)
-    	score -= FlankAttacks * (enemyKnightCount - ownknightCount);
+    	score -= FlankAttacks * enemyKnightCount;
 
     if (knightChecks & safe)
         kingDanger += KnightSafeCheck;
