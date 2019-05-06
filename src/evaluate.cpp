@@ -155,6 +155,7 @@ namespace {
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
   Score KnightFlankAttacks = S(  8,  0);
   TUNE(SetRange(-100, 100), KnightFlankAttacks);
+
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
@@ -446,6 +447,10 @@ namespace {
 
     // Enemy knights checks
     knightChecks = pos.attacks_from<KNIGHT>(ksq) & attackedBy[Them][KNIGHT];
+
+	Bitboard side = (KingSide & file_bb(ksq)) ? KingSide : QueenSide;
+    if (popcount(pos.pieces(Them, KNIGHT) & side) > popcount(pos.pieces(Us, KNIGHT) & side))
+       score -= KnightFlankAttacks;
 
     if (knightChecks & safe)
         kingDanger += KnightSafeCheck;
