@@ -153,7 +153,8 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-
+  Score KnightFlankAttacks = S(  8,  0);
+  TUNE(SetRange(-100, 100), KnightFlankAttacks);
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
