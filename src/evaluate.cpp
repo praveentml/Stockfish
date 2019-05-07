@@ -153,7 +153,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-  constexpr Score KnightFlankAttacks = S( 11,-11);
+  constexpr Score KnightFlankAttacks = S( 17, 49);
 
 #undef S
 
@@ -448,7 +448,7 @@ namespace {
     knightChecks = pos.attacks_from<KNIGHT>(ksq) & attackedBy[Them][KNIGHT];
 
     Bitboard side = (KingSide & file_bb(ksq)) ? KingSide : QueenSide;
-    if (popcount(pos.pieces(Them, KNIGHT) & side) > popcount(pos.pieces(Us, KNIGHT) & side))
+    if ((popcount(pos.pieces(Them, KNIGHT) & side) > popcount(pos.pieces(Us, KNIGHT) & side)) & (attackedBy[Them][KNIGHT] & kingRing[Us]))
        score -= KnightFlankAttacks;
 
     if (knightChecks & safe)
