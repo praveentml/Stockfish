@@ -447,10 +447,6 @@ namespace {
     // Enemy knights checks
     knightChecks = pos.attacks_from<KNIGHT>(ksq) & attackedBy[Them][KNIGHT];
 
-    Bitboard side = (KingSide & file_bb(ksq)) ? KingSide : QueenSide;
-    if ((popcount(pos.pieces(Them, KNIGHT) & side) > popcount(pos.pieces(Us, KNIGHT) & side)) & (attackedBy[Them][KNIGHT] & kingRing[Us]))
-       score -= KnightFlankAttacks;
-
     if (knightChecks & safe)
         kingDanger += KnightSafeCheck;
     else
@@ -482,6 +478,10 @@ namespace {
     // Transform the kingDanger units into a Score, and subtract it from the evaluation
     if (kingDanger > 100)
         score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
+
+    Bitboard side = (KingSide & file_bb(ksq)) ? KingSide : QueenSide;
+    if ((popcount(pos.pieces(Them, KNIGHT) & side) > popcount(pos.pieces(Us, KNIGHT) & side)) && (attackedBy[Them][KNIGHT] & kingRing[Us]))
+       score -= KnightFlankAttacks;
 
     // Penalty when our king is on a pawnless flank
     if (!(pos.pieces(PAWN) & KingFlank[file_of(ksq)]))
