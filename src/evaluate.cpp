@@ -153,6 +153,8 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  constexpr Score KnightPawns        = S(  3,  7);
+  constexpr Score CenterKnight       = S( 45,  0);
 
 #undef S
 
@@ -320,6 +322,18 @@ namespace {
 
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
+
+            if (Pt == KNIGHT)
+			{
+				// Penalty according to number of pawns on the landing square of the knight
+				Bitboard blocked = pos.pieces(Us, PAWN) & attackedBy[Us][KNIGHT];
+
+				score -= KnightPawns * (1 + popcount(blocked & CenterFiles));
+
+				// Bonus for knight on a center squares
+				if (more_than_one(attacks_bb<KNIGHT>(s, pos.pieces(PAWN)) & Center))
+					score += CenterKnight;
+			}
 
             if (Pt == BISHOP)
             {
