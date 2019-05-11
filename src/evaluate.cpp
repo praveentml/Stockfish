@@ -153,9 +153,11 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-  constexpr Score KnightPawns        = S( 15,  5);
+  Score KnightPawns        = S( 15,  5);
+  Score CenterKnight       = S( 45,  0);
+  TUNE(SetRange(-100, 100), KnightPawns, SetRange(-100, 100), CenterKnight);
 
-#undef S
+  #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
   template<Tracing T>
@@ -326,6 +328,10 @@ namespace {
 			{
 				// Penalty according to number of pawns on the landing square of the knight
 				score -= KnightPawns * (1 + popcount(b & pos.pieces(Us, PAWN) & CenterFiles));
+
+				// Bonus for knight on a center squares
+				if (file_bb(s) & Center)
+					score += CenterKnight;
 			}
 
             if (Pt == BISHOP)
