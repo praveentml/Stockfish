@@ -153,7 +153,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-  constexpr Score KnightPawns        = S(  3,  7);
+  constexpr Score KnightPawns        = S( 15,  5);
 
 #undef S
 
@@ -325,7 +325,7 @@ namespace {
             if (Pt == KNIGHT)
 			{
 				// Penalty according to number of pawns on the landing square of the knight
-				score -= KnightPawns * popcount(b & pos.pieces(Us, PAWN) & CenterFiles);
+				score -= KnightPawns * (1 + popcount(b & pos.pieces(Us, PAWN) & CenterFiles));
 			}
 
             if (Pt == BISHOP)
