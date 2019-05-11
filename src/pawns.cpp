@@ -198,7 +198,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       int d = std::min(f, ~f);
       safetyMg += ShelterStrength[d][ourRank];
       if (ourRank && (ourRank == theirRank - 1))
-          safetyMg -= 82 * ((theirRank == RANK_3) || (theirRank == RANK_4 && theirRank == (relative_rank(Us, ksq) + 2))),   safetyEg -= 82 * ((theirRank == RANK_3) || (theirRank == RANK_4 && theirRank == (relative_rank(Us, ksq) + 2)));
+          safetyMg -= 82 * ((theirRank == RANK_3) || (theirRank == RANK_4 && relative_rank(Us, ksq) <= RANK_6 && theirRank == (relative_rank(Us, ksq) + 2))),   safetyEg -= 82 * ((theirRank == RANK_3) || (theirRank == RANK_4 && relative_rank(Us, ksq) <= RANK_6  && theirRank == (relative_rank(Us, ksq) + 2)));
       else
           safetyMg -= UnblockedStorm[d][theirRank];
   }
