@@ -587,12 +587,12 @@ namespace {
 
         b = attackedBy[Us][KNIGHT] & pos.attacks_from<KNIGHT>(s);
 
-        if(b)
+        if(b & safe)
         {
-			if(popcount((pos.attacks_from<KNIGHT>(ks) | pos.attacks_from<BISHOP>(ks) | pos.attacks_from<ROOK>(ks) | pos.attacks_from<QUEEN>(ks)) & attackedBy[Them][ALL_PIECES]) == 0)
-				score += KnightOnQueen * (2 + popcount(b));
+			if(popcount((pos.attacks_from<KNIGHT>(ks) | pos.attacks_from<BISHOP>(ks) | pos.attacks_from<ROOK>(ks)) & attackedBy[Them][ALL_PIECES]) == 0)
+				score += (KnightOnQueen * (15 + popcount(b & safe))) / 10;
 			else
-				score += KnightOnQueen * popcount(b);
+				score += KnightOnQueen * popcount(b & safe);
         }
 
         b =  (attackedBy[Us][BISHOP] & pos.attacks_from<BISHOP>(s))
