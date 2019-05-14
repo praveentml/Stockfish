@@ -466,22 +466,23 @@ namespace {
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
 
-    kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
-                 +  69 * kingAttacksCount[Them]
-                 + 185 * popcount(kingRing[Us] & weak)
-                 - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
-                 -  35 * bool(attackedBy[Us][BISHOP] & attackedBy[Us][KING])
-                 + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
-                 - 873 * !pos.count<QUEEN>(Them)
-                 -   6 * mg_value(score) / 8
-                 +       mg_value(mobility[Them] - mobility[Us])
-                 +   5 * kingFlankAttacks * kingFlankAttacks / 16
-                 -   7;
-
-    // Transform the kingDanger units into a Score, and subtract it from the evaluation
-    if (kingDanger > 100)
-        score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
-
+    if (safeChecks[Them])
+    {
+		kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
+					 +  69 * kingAttacksCount[Them]
+					 + 185 * popcount(kingRing[Us] & weak)
+					 - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
+					 -  35 * bool(attackedBy[Us][BISHOP] & attackedBy[Us][KING])
+					 + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
+					 - 873 * !pos.count<QUEEN>(Them)
+					 -   6 * mg_value(score) / 8
+					 +       mg_value(mobility[Them] - mobility[Us])
+					 +   5 * kingFlankAttacks * kingFlankAttacks / 16
+					 -   7;
+		// Transform the kingDanger units into a Score, and subtract it from the evaluation
+		if (kingDanger > 100)
+			score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
+    }
     // Penalty when our king is on a pawnless flank
     if (!(pos.pieces(PAWN) & KingFlank[file_of(ksq)]))
         score -= PawnlessFlank;
@@ -590,7 +591,7 @@ namespace {
 
         b = attackedBy[Us][KNIGHT] & pos.attacks_from<KNIGHT>(s);
 
-        score += KnightOnQueen * popcount(b & safe) * (safeChecks[Them] ? 1 : 3);
+        score += KnightOnQueen * popcount(b & safe);
 
         b =  (attackedBy[Us][BISHOP] & pos.attacks_from<BISHOP>(s))
            | (attackedBy[Us][ROOK  ] & pos.attacks_from<ROOK  >(s));
