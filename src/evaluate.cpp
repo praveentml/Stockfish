@@ -213,8 +213,6 @@ namespace {
     // a white knight on g5 and black's king is on g8, this white knight adds 2
     // to kingAttacksCount[WHITE].
     int kingAttacksCount[COLOR_NB];
-
-    Bitboard safeChecks[COLOR_NB];
   };
 
 
