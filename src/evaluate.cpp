@@ -272,7 +272,7 @@ namespace {
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
 
-    Bitboard b, bb;
+    Bitboard b, bb, bishopPinners;
     Score score = SCORE_ZERO;
 
     attackedBy[Us][Pt] = 0;
@@ -331,7 +331,7 @@ namespace {
                                      * (1 + popcount(blocked & CenterFiles));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
-                if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
+                if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center) && ~(pos.slider_blockers(pos.pieces(Them, BISHOP), s, bishopPinners)))
                     score += LongDiagonalBishop;
             }
 
