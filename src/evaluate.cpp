@@ -153,7 +153,21 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-
+  int ii = 0, ij = 0, ik = 0, il = 0, im = 0, in = 0, io = 1, ip= 0, iq = 0, ir = 0, is = 0, it = 0, iu = 0, iv = 1;
+	TUNE(SetRange(-100, 100), ii);
+	TUNE(SetRange(-100, 100), ij);
+	TUNE(SetRange(-100, 100), ik);
+	TUNE(SetRange(-100, 100), il);
+	TUNE(SetRange(-100, 100), im);
+	TUNE(SetRange(-100, 100), in);
+	TUNE(SetRange(-100, 100), io);
+	TUNE(SetRange(-100, 100), ip);
+	TUNE(SetRange(-100, 100), iq);
+	TUNE(SetRange(-100, 100), ir);
+	TUNE(SetRange(-100, 100), is);
+	TUNE(SetRange(-100, 100), it);
+	TUNE(SetRange(-100, 100), iu);
+	TUNE(SetRange(-100, 100), iv);
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
@@ -307,12 +321,14 @@ namespace {
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
             if (bb & s)
-                score += Outpost * (Pt == KNIGHT ? 4 : 2)
-                                 * ((attackedBy[Us][PAWN] & s) ? 2 : 1);
+                score += Outpost * (Pt == KNIGHT ? ii : ij)
+                                 * ((attackedBy[Us][PAWN] & s) ? ik : il)
+								 * (b & attackedBy[Them][KING] ? im : in) / io;
 
             else if (bb &= b & ~pos.pieces(Us))
-                score += Outpost * (Pt == KNIGHT ? 2 : 1)
-                                 * ((attackedBy[Us][PAWN] & bb) ? 2 : 1);
+                score += Outpost * (Pt == KNIGHT ? ip : iq)
+                                 * ((attackedBy[Us][PAWN] & bb) ? ir : is)
+								 * (b & attackedBy[Them][KING] ? it : iu) / iv;
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
