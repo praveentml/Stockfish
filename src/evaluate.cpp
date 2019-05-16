@@ -153,7 +153,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-  int ii = 0, ij = 0, ik = 0, il = 0, im = 0, in = 0, io = 0, ip= 0, iq = 0, ir = 0, is = 0, it = 0, iu = 0, iv = 0;
+  int ii = 0, ij = 0, ik = 0, il = 0, im = 0, in = 0, io = 1, ip= 0, iq = 0, ir = 0, is = 0, it = 0, iu = 0, iv = 1;
   TUNE(SetRange(-100, 100), ii);
   TUNE(SetRange(-100, 100), ij);
   TUNE(SetRange(-100, 100), ik);
