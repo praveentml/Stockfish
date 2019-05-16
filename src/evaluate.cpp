@@ -153,7 +153,8 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-
+  int OutpostWeights[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  TUNE(SetRange(-100, 100), OutpostWeights);
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
@@ -307,12 +308,14 @@ namespace {
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
             if (bb & s)
-                score += Outpost * (Pt == KNIGHT ? 4 : 2)
-                                 * ((attackedBy[Us][PAWN] & s) ? 2 : 1);
+                score += Outpost * (Pt == KNIGHT ? OutpostWeights[0] : OutpostWeights[1])
+                                 * ((attackedBy[Us][PAWN] & s) ? OutpostWeights[2] : OutpostWeights[3])
+								 * (b & attackedBy[Them][KING] ? OutpostWeights[4] : OutpostWeights[5]) / OutpostWeights[6];
 
             else if (bb &= b & ~pos.pieces(Us))
-                score += Outpost * (Pt == KNIGHT ? 2 : 1)
-                                 * ((attackedBy[Us][PAWN] & bb) ? 2 : 1);
+                score += Outpost * (Pt == KNIGHT ? OutpostWeights[7] : OutpostWeights[8])
+                                 * ((attackedBy[Us][PAWN] & bb) ? OutpostWeights[9] : OutpostWeights[10])
+								 * (b & attackedBy[Them][KING] ? OutpostWeights[11] : OutpostWeights[12]) / OutpostWeights[13];
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
