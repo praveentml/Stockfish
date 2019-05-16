@@ -153,21 +153,19 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-  int ii = 0, ij = 0, ik = 0, il = 0, im = 0, in = 0, io = 1, ip= 0, iq = 0, ir = 0, is = 0, it = 0, iu = 0, iv = 1;
-	TUNE(SetRange(-100, 100), ii);
-	TUNE(SetRange(-100, 100), ij);
-	TUNE(SetRange(-100, 100), ik);
-	TUNE(SetRange(-100, 100), il);
-	TUNE(SetRange(-100, 100), im);
-	TUNE(SetRange(-100, 100), in);
-	TUNE(SetRange(-100, 100), io);
-	TUNE(SetRange(-100, 100), ip);
-	TUNE(SetRange(-100, 100), iq);
-	TUNE(SetRange(-100, 100), ir);
-	TUNE(SetRange(-100, 100), is);
-	TUNE(SetRange(-100, 100), it);
-	TUNE(SetRange(-100, 100), iu);
-	TUNE(SetRange(-100, 100), iv);
+  int ii = 4*16, ij = 2*16, ik = 2*16, il = 1*16, im = 1*16, in = 1*16, ip= 2*16, iq = 1*16, ir = 2*16, is = 1*16, it = 1*16, iu = 1*16;
+	TUNE(SetRange(14, 114), ii);
+	TUNE(SetRange(-18, 82), ij);
+	TUNE(SetRange(-18, 82), ik);
+	TUNE(SetRange(-34, 66), il);
+	TUNE(SetRange(-34, 66), im);
+	TUNE(SetRange(-34, 66), in);
+	TUNE(SetRange(-18, 82), ip);
+	TUNE(SetRange(-34, 66), iq);
+	TUNE(SetRange(-18, 82), ir);
+	TUNE(SetRange(-34, 66), is);
+	TUNE(SetRange(-34, 66), it);
+	TUNE(SetRange(-34, 66), iu);
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
@@ -323,12 +321,12 @@ namespace {
             if (bb & s)
                 score += Outpost * (Pt == KNIGHT ? ii : ij)
                                  * ((attackedBy[Us][PAWN] & s) ? ik : il)
-								 * (b & attackedBy[Them][KING] ? im : in) / io;
+								 * (b & attackedBy[Them][KING] ? im : in) / (16*16);
 
             else if (bb &= b & ~pos.pieces(Us))
                 score += Outpost * (Pt == KNIGHT ? ip : iq)
                                  * ((attackedBy[Us][PAWN] & bb) ? ir : is)
-								 * (b & attackedBy[Them][KING] ? it : iu) / iv;
+								 * (b & attackedBy[Them][KING] ? it : iu) / (16*16);
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
