@@ -613,7 +613,7 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
+    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares, blockSquares;
     Score score = SCORE_ZERO;
 
     b = pe->passed_pawns(Us);
@@ -673,10 +673,15 @@ namespace {
             }
         } // r > RANK_3
 
+        if (r != RANK_7)
+        	blockSquares = (s + Up || s + Up + Up) ;
+		else
+			blockSquares = s + Up ;
+
         // Scale down bonus for candidate passers which need more than one
         // pawn push to become passed, or have a pawn in front of them.
         if (   !pos.pawn_passed(Us, s + Up)
-            || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
+            || (pos.pieces(PAWN) & blockSquares))
             bonus = bonus / 2;
 
         score += bonus + PassedFile[file_of(s)];
