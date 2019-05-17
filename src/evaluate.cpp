@@ -628,7 +628,7 @@ namespace {
 
         Score bonus = PassedRank[r];
 
-        if (r > RANK_3)
+        if (r > RANK_3 && r <= RANK_7)
         {
             int w = (r-2) * (r-2) + 2;
             Square blockSq = s + Up;
@@ -677,7 +677,7 @@ namespace {
         // pawn push to become passed, or have a pawn in front of them.
         if (   !pos.pawn_passed(Us, s + Up)
             || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
-            bonus = bonus / 2;
+            bonus = bonus / (8 - r);
 
         score += bonus + PassedFile[file_of(s)];
     }
