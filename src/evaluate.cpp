@@ -665,10 +665,10 @@ namespace {
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
                     k += 8;
-                else if (passed_pawn_span(Us, s) & pos.pieces(Us, KNIGHT, BISHOP))
+                else if (passed_pawn_span(Us, s) & pos.pieces(Us) & ~pos.pieces(PAWN))
                 	k += 8;
                 else if (defendedSquares & blockSq)
-                    k += 4;
+                    k += 6;
 
                 bonus += make_score(k * w, k * w);
             }
