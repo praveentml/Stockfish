@@ -668,7 +668,7 @@ namespace {
                 else if (passed_pawn_span(Us, s) & pos.pieces(Us, KNIGHT, BISHOP))
                 	k += 8;
                 else if (defendedSquares & blockSq)
-                    k += 6;
+                    k += 4;
 
                 bonus += make_score(k * w, k * w);
             }
