@@ -665,16 +665,12 @@ namespace {
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
                     k += 6;
-
+                else if (passed_pawn_span(Us, s) & pos.pieces(Us, KNIGHT, BISHOP))
+                	k += 6;
                 else if (defendedSquares & blockSq)
                     k += 4;
 
                 bonus += make_score(k * w, k * w);
-
-                Bitboard side = (KingSide & passed_pawn_span(Us, s)) ? KingSide : QueenSide;
-                if (popcount(pos.pieces(Us) & side) > popcount(pos.pieces(Them) & side))
-                	 bonus = bonus * 2;
-
             }
         } // r > RANK_3
 
