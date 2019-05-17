@@ -670,6 +670,11 @@ namespace {
                     k += 4;
 
                 bonus += make_score(k * w, k * w);
+
+                Bitboard side = (KingSide & passed_pawn_span(Us, s)) ? KingSide : QueenSide;
+                if (popcount(pos.pieces(Us) & side) > popcount(pos.pieces(Them) & side))
+                	 bonus = bonus * 2;
+
             }
         } // r > RANK_3
 
