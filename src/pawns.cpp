@@ -200,7 +200,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       int d = std::min(f, ~f);
       bonus[MG] += ShelterStrength[d][ourRank];
 
-      if (ourRank && ((ourRank == theirRank - 1) || (forward_file_bb(Us, backmost_sq(Us, ourFile)) & theirFile)))
+      if (ourRank && ((ourRank == theirRank - 1) || (forward_file_bb(Us, backmost_sq(Us, ourFile)) & pos.pieces(Them, PAWN))))
           bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
       else
           bonus[MG] -= UnblockedStorm[d][theirRank];
