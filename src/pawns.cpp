@@ -183,6 +183,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
+  Bitboard ourFile, theirFile;
 
   Value bonus[] = { (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5),
                     VALUE_ZERO };
@@ -190,16 +191,16 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      Rank ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
+	  ourFile = ourPawns & file_bb(f);
+      Rank ourRank = ourFile ? relative_rank(Us, backmost_sq(Us, ourFile)) : RANK_1;
 
-      b = theirPawns & file_bb(f);
-      Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      theirFile = theirPawns & file_bb(f);
+      Rank theirRank = theirFile ? relative_rank(Us, frontmost_sq(Them, theirFile)) : RANK_1;
 
       int d = std::min(f, ~f);
       bonus[MG] += ShelterStrength[d][ourRank];
 
-      if (ourRank && (ourRank == theirRank - 1))
+      if (ourRank && ((ourRank == theirRank - 1) || (forward_file_bb(Us, backmost_sq(Us, ourFile)) & theirFile)))
           bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
       else
           bonus[MG] -= UnblockedStorm[d][theirRank];
