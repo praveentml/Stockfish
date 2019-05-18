@@ -183,6 +183,8 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
+  Bitboard pawns = pos.pieces(Them, PAWN);
+  int kingDistance = distance(ksq, pop_lsb(&pawns));
 
   Value bonus[] = { (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5),
                     VALUE_ZERO };
@@ -200,7 +202,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       bonus[MG] += ShelterStrength[d][ourRank];
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus[MG] -= 82 * (theirRank <= RANK_3), bonus[EG] -= 82 * (theirRank <= RANK_3);
+          bonus[MG] -= 82 * (theirRank == RANK_3 || (kingDistance <= 2)), bonus[EG] -= 82 * (theirRank == RANK_3 || (kingDistance <= 2));
       else
           bonus[MG] -= UnblockedStorm[d][theirRank];
   }
