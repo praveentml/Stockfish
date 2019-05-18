@@ -153,7 +153,10 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-
+  int ki = (8*16), kj = (8*16), kk = (6*16);
+  TUNE(SetRange(78,178), ki);
+  TUNE(SetRange(78,178), kj);
+  TUNE(SetRange(46,146), kk);
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
@@ -664,10 +667,11 @@ namespace {
                 // If the path to the queen is fully defended, assign a big bonus.
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
-                    k += 6;
-
+                    k += ki / 16;
+                else if (passed_pawn_span(Us, s) & pos.pieces(Us, KNIGHT, BISHOP))
+                	k += kj / 16;
                 else if (defendedSquares & blockSq)
-                    k += 4;
+                    k += kk / 16;
 
                 bonus += make_score(k * w, k * w);
             }
