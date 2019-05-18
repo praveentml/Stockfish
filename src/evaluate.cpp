@@ -664,11 +664,11 @@ namespace {
                 // If the path to the queen is fully defended, assign a big bonus.
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
-                    k += 8;
-                else if (passed_pawn_span(Us, s) & pos.pieces(Us, KNIGHT, BISHOP))
-                	k += 7;
-                else if (defendedSquares & blockSq)
                     k += 6;
+                else if (passed_pawn_span(Us, s) & pos.pieces(Us, KNIGHT, BISHOP))
+                	k += 8;
+                else if (defendedSquares & blockSq)
+                    k += 4;
 
                 bonus += make_score(k * w, k * w);
             }
