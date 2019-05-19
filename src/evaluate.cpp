@@ -661,16 +661,17 @@ namespace {
                 // assign a smaller bonus if the block square isn't attacked.
                 int k = !unsafeSquares ? 20 : !(unsafeSquares & blockSq) ? 9 : 0;
 
+                if (popcount(passed_pawn_span(Us, s) & (attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & ~attackedBy[Us][ALL_PIECES]) < 1)
+                	k = 2 * k;
+
                 // If the path to the queen is fully defended, assign a big bonus.
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
-                    k += 8;
-                else if (passed_pawn_span(Us, s) & pos.pieces(Us, KNIGHT, BISHOP))
-                	k += 8;
-                else if (defendedSquares & blockSq)
                     k += 6;
-                else
-                    k += popcount(defendedSquares & attackedBy[Us][PAWN]);
+
+                else if (defendedSquares & blockSq)
+                    k += 4;
+
                 bonus += make_score(k * w, k * w);
             }
         } // r > RANK_3
