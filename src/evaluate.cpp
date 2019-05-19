@@ -661,6 +661,9 @@ namespace {
                 // assign a smaller bonus if the block square isn't attacked.
                 int k = !unsafeSquares ? 20 : !(unsafeSquares & blockSq) ? 9 : 0;
 
+                if (!(passed_pawn_span(Us, s) & (attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & ~attackedBy[Us][ALL_PIECES]))
+                	k += (k / 3);
+
                 // If the path to the queen is fully defended, assign a big bonus.
                 // Otherwise assign a smaller bonus if the block square is defended.
                 if (defendedSquares == squaresToQueen)
