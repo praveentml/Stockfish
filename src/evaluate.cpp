@@ -613,7 +613,7 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
+    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares, daSquares, ddSquares;
     Score score = SCORE_ZERO;
 
     b = pe->passed_pawns(Us);
@@ -649,13 +649,19 @@ namespace {
                 // in the pawn's path attacked or occupied by the enemy.
                 defendedSquares = unsafeSquares = squaresToQueen = forward_file_bb(Us, s);
 
+                //double attacked but not double defended by enemy
+                ddSquares = attackedBy2[Us] & ~attackedBy2[Them];
+
+                //double attacked but not double defended by us
+                daSquares = attackedBy2[Them] & ~attackedBy2[Us];
+
                 bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN);
 
                 if (!(pos.pieces(Us) & bb))
-                    defendedSquares &= (attackedBy[Us][ALL_PIECES] & ~attackedBy2[Them]);
+                    defendedSquares &= (attackedBy[Us][ALL_PIECES] & ~daSquares);
 
                 if (!(pos.pieces(Them) & bb))
-                    unsafeSquares &= ((attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & ~attackedBy2[Us]);
+                    unsafeSquares &= ((attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & ~ddSquares);
 
                 // If there aren't any enemy attacks, assign a big bonus. Otherwise
                 // assign a smaller bonus if the block square isn't attacked.
