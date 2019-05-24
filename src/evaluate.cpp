@@ -650,7 +650,7 @@ namespace {
                 defendedSquares = unsafeSquares = squaresToQueen = forward_file_bb(Us, s);
 
                 //double attacked but not double defended by enemy
-                ddSquares = attackedBy2[Us] & ~attackedBy2[Them];
+                //ddSquares = attackedBy2[Us] & ~attackedBy2[Them];
 
                 //double attacked but not double defended by us
                 daSquares = attackedBy2[Them] & ~attackedBy2[Us];
@@ -661,7 +661,8 @@ namespace {
                     defendedSquares &= (attackedBy[Us][ALL_PIECES] & ~daSquares);
 
                 if (!(pos.pieces(Them) & bb))
-                    unsafeSquares &= ((attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & ~ddSquares);
+                	unsafeSquares &= (attackedBy[Them][ALL_PIECES] | pos.pieces(Them));
+                    //unsafeSquares &= ((attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & ~ddSquares);
 
                 // If there aren't any enemy attacks, assign a big bonus. Otherwise
                 // assign a smaller bonus if the block square isn't attacked.
