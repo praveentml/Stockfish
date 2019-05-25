@@ -647,15 +647,15 @@ namespace {
                 // If there is a rook or queen attacking/defending the pawn from behind,
                 // consider all the squaresToQueen. Otherwise consider only the squares
                 // in the pawn's path attacked or occupied by the enemy.
-                defendedSquares = unsafeSquares = squaresToQueen = forward_file_bb(Us, s);
+                defendedSquares = unsafeSquares = squaresToQueen = (forward_file_bb(Us, s) | s);
 
-                bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN);
+                bb = (forward_file_bb(Them, s) | s) & pos.pieces(ROOK, QUEEN);
 
                 if (!(pos.pieces(Us) & bb))
                     defendedSquares &= attackedBy[Us][ALL_PIECES];
 
                 if (!(pos.pieces(Them) & bb))
-                    unsafeSquares &= attackedBy[Them][ALL_PIECES] | pos.pieces(Them) | (attacks_bb<ROOK>(s, pos.pieces(Us, PAWN)) & pos.pieces(Them, ROOK, QUEEN));
+                    unsafeSquares &= attackedBy[Them][ALL_PIECES] | pos.pieces(Them);
 
                 // If there aren't any enemy attacks, assign a big bonus. Otherwise
                 // assign a smaller bonus if the block square isn't attacked.
