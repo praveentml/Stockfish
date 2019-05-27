@@ -327,7 +327,8 @@ namespace {
                 // bishop, bigger when the center files are blocked with pawns.
                 Bitboard blocked = pos.pieces(Us, PAWN) & shift<Down>(pos.pieces());
 
-                score -= BishopPawns * (std::max(pos.pawns_on_same_color_squares(Us, s), popcount(blocked & CenterFiles)));
+                score -= BishopPawns * pos.pawns_on_same_color_squares(Us, s)
+                                     * (1 + popcount(blocked & CenterFiles));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
@@ -351,19 +352,25 @@ namespace {
 
         if (Pt == ROOK)
         {
+        	File kingFile = file_of(pos.square<KING>(Us));
+        	File currentFile = file_of(s);
+
             // Bonus for aligning rook with enemy pawns on the same rank/file
             if (relative_rank(Us, s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
-            if (pos.is_semiopen_file(Us, file_of(s)))
-                score += RookOnFile[bool(pos.is_semiopen_file(Them, file_of(s)))];
+            if (pos.is_semiopen_file(Us, currentFile))
+            {
+            	Score openfileScore = RookOnFile[bool(pos.is_semiopen_file(Them, currentFile))];
+            	(more_than_one(KingFlank[kingFile] & currentFile)) ? (openfileScore += openfileScore / 2) : openfileScore;
+            	score += openfileScore;
+            }
 
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
-                File kf = file_of(pos.square<KING>(Us));
-                if ((kf < FILE_E) == (file_of(s) < kf))
+                if ((kingFile < FILE_E) == (currentFile < kingFile))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
         }
