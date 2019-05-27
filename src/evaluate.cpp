@@ -81,10 +81,10 @@ namespace {
   constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 77, 55, 44, 10 };
 
   // Penalties for enemy's safe checks
-  constexpr int QueenSafeCheck  = 775;
-  constexpr int RookSafeCheck   = 1075;
-  constexpr int BishopSafeCheck = 630;
-  constexpr int KnightSafeCheck = 785;
+  constexpr int QueenSafeCheck  = 778;
+  constexpr int RookSafeCheck   = 1081;
+  constexpr int BishopSafeCheck = 636;
+  constexpr int KnightSafeCheck = 790;
 
 #define S(mg, eg) make_score(mg, eg)
 
