@@ -352,7 +352,6 @@ namespace {
 
         if (Pt == ROOK)
         {
-        	File kingFile = file_of(pos.square<KING>(Us));
         	File currentFile = file_of(s);
 
             // Bonus for aligning rook with enemy pawns on the same rank/file
@@ -363,13 +362,14 @@ namespace {
             if (pos.is_semiopen_file(Us, currentFile))
             {
             	Score openfileScore = RookOnFile[bool(pos.is_semiopen_file(Them, currentFile))];
-            	(more_than_one(KingFlank[kingFile] & currentFile)) ? (openfileScore += openfileScore / 2) : openfileScore;
+            	(KingFlank[pos.square<KING>(Them)] & file_bb(currentFile)) ? (openfileScore += openfileScore / 2) : openfileScore;
             	score += openfileScore;
             }
 
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
+            	File kingFile = file_of(pos.square<KING>(Us));
                 if ((kingFile < FILE_E) == (currentFile < kingFile))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
