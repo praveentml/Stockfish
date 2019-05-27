@@ -362,7 +362,8 @@ namespace {
             if (pos.is_semiopen_file(Us, currentFile))
             {
             	Score openfileScore = RookOnFile[bool(pos.is_semiopen_file(Them, currentFile))];
-            	(KingFlank[pos.square<KING>(Them)] & file_bb(currentFile)) ? (openfileScore += openfileScore / 2) : openfileScore;
+            	if(KingFlank[pos.square<KING>(Them)] & file_bb(currentFile))
+            		openfileScore += openfileScore / 2;
             	score += openfileScore;
             }
 
