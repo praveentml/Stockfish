@@ -331,7 +331,7 @@ namespace {
                                      * (1 + popcount(blocked & CenterFiles));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
-                if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
+                if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center) && !(pos.attackers_to(s) & (pos.pieces(Them, PAWN) | pos.pieces(Them, BISHOP))))
                     score += LongDiagonalBishop;
             }
 
