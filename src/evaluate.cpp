@@ -373,8 +373,13 @@ namespace {
         {
             // Penalty if any relative pin or discovered attack against the queen
             Bitboard queenPinners;
-            if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
-                score -= SliderOnQueen;
+            // Attacked squares defended at most once by their queen or king
+            Bitboard weakAttacker = (attackedBy[Us][ALL_PIECES] | attackedBy2[Us])
+                  & ~attackedBy2[Them]
+                  & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
+            // if opponent slider attacker is only defended by queen or king then there shouldn't be any slider penalty
+            if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners) && !(weakAttacker & file_of(s)))
+                score -= WeakQueen;
         }
     }
     if (T)
