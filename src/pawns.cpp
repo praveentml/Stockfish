@@ -200,7 +200,17 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       bonus[MG] += ShelterStrength[d][ourRank];
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
+      {
+    	  if((relative_rank(Us, ksq) == RANK_2 && theirRank == RANK_4))
+    	  {
+    		  if(pawn_attacks_bb<Them>(theirPawns) & (pos.pieces(Us) ^ pos.pieces(Us, PAWN)))
+    			  bonus[MG] -= UnblockedStorm[d][theirRank] / 2;
+    		  else
+    			  bonus[MG] -= 46, bonus[EG] -= 46;
+    	  }
+    	  else
+    		  bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
+      }
       else
           bonus[MG] -= UnblockedStorm[d][theirRank];
   }
