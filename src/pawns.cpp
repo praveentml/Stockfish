@@ -196,11 +196,11 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       b = theirPawns & file_bb(f);
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
-      int d = std::min(f, ~f);
+      int d = std::max(f, ~f);
       bonus[MG] += ShelterStrength[d][ourRank];
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus[MG] -= ((UnblockedStorm[d][theirRank] * 80) / 100) * (theirRank == RANK_3), bonus[EG] -= ((UnblockedStorm[d][theirRank] * 80) / 100) * (theirRank == RANK_3);
+          bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
       else
           bonus[MG] -= UnblockedStorm[d][theirRank];
   }
