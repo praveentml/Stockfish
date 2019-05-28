@@ -203,7 +203,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       {
     	  if((relative_rank(Us, ksq) == RANK_2 && theirRank == RANK_4))
     	  {
-    		  if(pawn_attacks_bb<Them>(theirPawns) & (pos.pieces(Us) ^ pos.pieces(Us, PAWN)))
+    		  if(pawn_attacks_bb<Them>(theirPawns) & KingFlank[file_of(ksq)] & ~ourPawns)
     			  bonus[MG] -= UnblockedStorm[d][theirRank] / 2;
     		  else
     			  bonus[MG] -= 46, bonus[EG] -= 46;
