@@ -203,9 +203,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       {
     	  Bitboard b1 = pawn_attacks_bb<Them>(theirPawns) & KingFlank[file_of(ksq)] & ~ourPawns;
     	  if((relative_rank(Us, ksq) == RANK_2 && theirRank == RANK_4) && b1)
-    	  {
-    			  bonus[MG] -= UnblockedStorm[d][theirRank] / 2;
-    	  }
+    		  bonus[MG] -= 66 , bonus[EG] -= 66;
     	  else
     		  bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
       }
