@@ -383,7 +383,7 @@ namespace {
             if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, queenPinners))
             	score -= WeakQueen;
             // if opponent rook slider attacker is only defended by queen or king then there shouldn't be any slider penalty
-            else if (pos.slider_blockers(pos.pieces(Them, ROOK), s, queenPinners) && !(weakAttacker & file_bb(s)))
+            else if (pos.slider_blockers(pos.pieces(Them, ROOK), s, queenPinners) && !(weakAttacker & pos.pieces(Them, ROOK) & (file_bb(s) | rank_bb(s))))
                 score -= WeakQueen;
 
         }
