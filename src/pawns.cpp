@@ -200,7 +200,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       bonus[MG] += ShelterStrength[d][ourRank];
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus[MG] -= 112 * (theirRank == RANK_3), bonus[EG] -= 112 * (theirRank == RANK_3);
+          bonus[MG] -= (UnblockedStorm[d][theirRank] / 2) * (theirRank == RANK_3), bonus[EG] -= (UnblockedStorm[d][theirRank] / 2) * (theirRank == RANK_3);
       else
           bonus[MG] -= UnblockedStorm[d][theirRank];
   }
