@@ -609,9 +609,12 @@ namespace {
 			}
 			else if(weakAttacker)
 			{
-				if ((weakAttacker & file_bb(queenSquare)) && !(attackedBy[Us][QUEEN] & file_bb(queenSquare) & pos.pieces(Us, ROOK)))
+				Bitboard queenFile = file_bb(queenSquare);
+				Bitboard queenRank = rank_bb(queenSquare);
+
+				if ((weakAttacker & queenFile) && !(attackedBy[Us][QUEEN] & queenFile & pos.pieces(Us, ROOK)))
 					score -= WeakQueen;
-				if ((weakAttacker & rank_bb(queenSquare)) && !(attackedBy[Us][QUEEN] & rank_bb(queenSquare) & pos.pieces(Us, ROOK)))
+				if ((weakAttacker & queenRank) && !(attackedBy[Us][QUEEN] & queenRank & pos.pieces(Us, ROOK)))
 					score -= WeakQueen;
 			}
 
