@@ -607,14 +607,14 @@ namespace {
     			{
     				score -= WeakQueen;
     			}
-    			else if(weakAttacker)
+    			else
     			{
     				Bitboard queenFile = file_bb(queenSquare);
     				Bitboard queenRank = rank_bb(queenSquare);
 
     				if ((weakAttacker & queenFile) && !(attackedBy[Us][QUEEN] & queenFile & pos.pieces(Us, ROOK)))
     					score -= WeakQueen;
-    				if ((weakAttacker & queenRank) && !(attackedBy[Us][QUEEN] & queenRank & pos.pieces(Us, ROOK)))
+    				else if ((weakAttacker & queenRank) && !(attackedBy[Us][QUEEN] & queenRank & pos.pieces(Us, ROOK)))
     					score -= WeakQueen;
     			}
 
