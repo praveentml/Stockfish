@@ -603,7 +603,7 @@ namespace {
     			while(rookSquares)
 				{
 					Square s = pop_lsb(&rookSquares);
-					if(pos.slider_blockers(s, queenSquare, queenPinners))
+					if(pos.slider_blockers(square_bb(s), queenSquare, queenPinners))
 					{
 						// Attacked squares defended at most once by their queen or king
 						Bitboard weakAttacker = s & ~attackedBy2[Them]
