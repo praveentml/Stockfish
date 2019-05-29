@@ -597,11 +597,8 @@ namespace {
 		Bitboard weakAttacker =  pos.pieces(Them) & ~stronglyProtected
 			  & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
 
-		//since diagonal x-rays not considered in attackedby2 computations
-		if (pos.slider_blockers(pos.pieces(Them, BISHOP), queenSquare, queenPinners))
-			score -= WeakQueen;
 		// if opponent rook slider attacker is only defended by queen or king then there shouldn't be any slider penalty
-		else if (pos.slider_blockers(pos.pieces(Them, ROOK), queenSquare, queenPinners) && !(weakAttacker & queenPinners))
+		if (pos.slider_blockers(pos.pieces(Them, BISHOP, ROOK), queenSquare, queenPinners) && !(weakAttacker & queenPinners))
 			score -= WeakQueen;
     }
 
