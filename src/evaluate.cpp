@@ -591,35 +591,51 @@ namespace {
         {
     		Square queenSquare = pos.square<QUEEN>(Us);
     		// Penalty if any relative pin or discovered attack against the queen
-    		Bitboard queenPinners;
+    		Bitboard queenPinners, rookSquares = pos.pieces(Them, ROOK);
 
     		//since diagonal x-rays not considered in attackedby2 computations
     		if (pos.slider_blockers(pos.pieces(Them, BISHOP), queenSquare, queenPinners))
     			score -= WeakQueen;
+
     		// if opponent rook slider attacker is only defended by queen or king then there shouldn't be any slider penalty
-    		else if (pos.slider_blockers(pos.pieces(Them, ROOK), queenSquare, queenPinners))
+    		else
     		{
-    			// Attacked squares defended at most once by their queen or king
-    			Bitboard weakAttacker =  pos.pieces(Them, ROOK) & ~stronglyProtected
-    				  & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
+    			while(rookSquares)
+				{
+					Square s = pop_lsb(&rookSquares);
+					if(pos.slider_blockers(s, queenSquare, queenPinners))
+					{
+						// Attacked squares defended at most once by their queen or king
+						Bitboard weakAttacker = s & ~attackedBy2[Them]
+							  & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
 
-    			if(!weakAttacker)
-    			{
-    				score -= WeakQueen;
-    			}
-    			else
-    			{
-    				Bitboard queenFile = file_bb(queenSquare);
-    				Bitboard queenRank = rank_bb(queenSquare);
+						if(!weakAttacker)
+						{
+							score -= WeakQueen;
+							rookSquares = 0;
+						}
+						else
+						{
+							Bitboard queenFile = file_bb(queenSquare);
+							Bitboard queenRank = rank_bb(queenSquare);
 
-    				if ((weakAttacker & queenFile) && !(attackedBy[Us][QUEEN] & queenFile & pos.pieces(Us, ROOK)))
-    					score -= WeakQueen;
-    				else if ((weakAttacker & queenRank) && !(attackedBy[Us][QUEEN] & queenRank & pos.pieces(Us, ROOK)))
-    					score -= WeakQueen;
-    			}
+							if ((weakAttacker & queenFile) && !(attackedBy[Us][QUEEN] & queenFile & pos.pieces(Us, ROOK)))
+							{
+								score -= WeakQueen;
+								rookSquares = 0;
+							}
+							else if ((weakAttacker & queenRank) && !(attackedBy[Us][QUEEN] & queenRank & pos.pieces(Us, ROOK)))
+							{
+								score -= WeakQueen;
+								rookSquares = 0;
+							}
+						}
 
+					}
+				}
     		}
         }
+
 
     if (T)
         Trace::add(THREAT, Us, score);
