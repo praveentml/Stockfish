@@ -602,8 +602,19 @@ namespace {
 			// Attacked squares defended at most once by their queen or king
 			Bitboard weakAttacker =  pos.pieces(Them, ROOK) & ~stronglyProtected
 				  & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
-			if(!(weakAttacker & (file_bb(queenSquare) | rank_bb(queenSquare))))
+
+			if(!weakAttacker)
+			{
+				score -= WeakQueen;
+			}
+			else if(weakAttacker)
+			{
+				if ((weakAttacker & file_bb(queenSquare)) && !(attackedBy[Us][QUEEN] & file_bb(queenSquare) & pos.pieces(Us, ROOK)))
 					score -= WeakQueen;
+				if ((weakAttacker & rank_bb(queenSquare)) && !(attackedBy[Us][QUEEN] & rank_bb(queenSquare) & pos.pieces(Us, ROOK)))
+					score -= WeakQueen;
+			}
+
 		}
     }
 
