@@ -587,21 +587,23 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
-    Square queenSquare = pos.square<QUEEN>(Us);
-    // Penalty if any relative pin or discovered attack against the queen
-    Bitboard queenPinners;
+    if (pos.count<QUEEN>(Us) == 1)
+    {
+		Square queenSquare = pos.square<QUEEN>(Us);
+		// Penalty if any relative pin or discovered attack against the queen
+		Bitboard queenPinners;
 
-    // Attacked squares defended at most once by their queen or king
-    Bitboard weakAttacker = attackedBy2[Us]
-          & ~attackedBy2[Them]
-          & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
+		// Attacked squares defended at most once by their queen or king
+		Bitboard weakAttacker =  pos.pieces(Them) & ~stronglyProtected
+			  & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
 
-    //since diagonal x-rays not considered in attackedby2 computations
-    if (pos.slider_blockers(pos.pieces(Them, BISHOP), queenSquare, queenPinners))
-    	score -= WeakQueen;
-    // if opponent rook slider attacker is only defended by queen or king then there shouldn't be any slider penalty
-    else if (pos.slider_blockers(pos.pieces(Them, ROOK), queenSquare, queenPinners) && !(weakAttacker & queenPinners))
-        score -= WeakQueen;
+		//since diagonal x-rays not considered in attackedby2 computations
+		if (pos.slider_blockers(pos.pieces(Them, BISHOP), queenSquare, queenPinners))
+			score -= WeakQueen;
+		// if opponent rook slider attacker is only defended by queen or king then there shouldn't be any slider penalty
+		else if (pos.slider_blockers(pos.pieces(Them, ROOK), queenSquare, queenPinners) && !(weakAttacker & queenPinners))
+			score -= WeakQueen;
+    }
 
     if (T)
         Trace::add(THREAT, Us, score);
