@@ -377,10 +377,6 @@ namespace {
                 score -= WeakQueen;
         }
 
-        b = pos.pieces(Them) & ~attackedBy2[Them] & attackedBy[Them][Pt];
-
-        if (more_than_one(b))
-        	score += make_score(10, 25);
     }
     if (T)
         Trace::add(Pt, Us, score);
@@ -599,6 +595,14 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    while(nonPawnEnemies)
+    {
+        Square s = pop_lsb(&nonPawnEnemies);
+		b = pos.pieces(Them) & ~attackedBy2[Them] & attackedBy[Them][type_of(pos.piece_on(s))];
+
+		if (more_than_one(b))
+			score += make_score(10, 25);
+    }
     if (T)
         Trace::add(THREAT, Us, score);
 
