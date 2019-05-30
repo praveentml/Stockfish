@@ -601,7 +601,7 @@ namespace {
 		b = pos.pieces(Them) & ~attackedBy2[Them] & attackedBy[Them][type_of(pos.piece_on(s))];
 
 		if (more_than_one(b))
-			score += make_score(10, 25);
+			score += RestrictedPiece;
     }
     if (T)
         Trace::add(THREAT, Us, score);
