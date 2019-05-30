@@ -333,6 +333,14 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+                if (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1))
+				{
+					Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
+					if (pos.piece_on(s + d + d) == make_piece(Us, PAWN))
+						score -= ((pos.piece_on(s + d + d) == make_piece(Us, PAWN)) && (attackedBy[Them][PAWN] & (s + d)))
+								? !pos.empty(s + d + d + pawn_push(Us)) ? CorneredBishop * 4 : CorneredBishop * 2 : CorneredBishop;
+				}
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
