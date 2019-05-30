@@ -376,6 +376,11 @@ namespace {
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
         }
+
+        b = pos.pieces(Them) & ~attackedBy2[Them] & attackedBy[Them][Pt];
+
+        if (more_than_one(b))
+        	score += make_score(10, 25);
     }
     if (T)
         Trace::add(Pt, Us, score);
