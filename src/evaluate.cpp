@@ -134,7 +134,7 @@ namespace {
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
-  Score CorneredBishop     = S( 50, 50);
+  Score CorneredBishop     = S( 100, 100);
   Score CorneredBishop1    = S( 50, 50);
   Score CorneredBishop2    = S( 50, 50);
   constexpr Score FlankAttacks       = S(  8,  0);
@@ -155,7 +155,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-TUNE(SetRange(0, 100), CorneredBishop, SetRange(0, 100), CorneredBishop1, SetRange(0, 100), CorneredBishop2);
+TUNE(SetRange(0, 200), CorneredBishop, SetRange(0, 200), CorneredBishop1, SetRange(0, 200), CorneredBishop2);
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
