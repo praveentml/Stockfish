@@ -606,7 +606,7 @@ namespace {
 					if(pos.slider_blockers(square_bb(s), queenSquare, queenPinners))
 					{
 						// Attacked squares defended at most once by their queen or king
-						Bitboard weakAttacker = s & ~attackedBy2[Them]
+						Bitboard weakAttacker = ~stronglyProtected & s
 							  & (~attackedBy[Them][ALL_PIECES] | attackedBy[Them][KING] | attackedBy[Them][QUEEN]);
 
 						if(!weakAttacker)
