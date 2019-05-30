@@ -134,7 +134,9 @@ namespace {
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
-  constexpr Score CorneredBishop     = S( 50, 50);
+  Score CorneredBishop     = S( 50, 50);
+  Score CorneredBishop1    = S( 50, 50);
+  Score CorneredBishop2    = S( 50, 50);
   constexpr Score FlankAttacks       = S(  8,  0);
   constexpr Score Hanging            = S( 69, 36);
   constexpr Score KingProtector      = S(  7,  8);
@@ -153,7 +155,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
-
+TUNE(SetRange(0, 100), CorneredBishop, SetRange(0, 100), CorneredBishop1, SetRange(0, 100), CorneredBishop2);
 #undef S
 
   // Evaluation class computes and stores attacks tables and other working data
@@ -334,6 +336,14 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
             }
+
+            if (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1))
+			{
+				Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
+				if (pos.piece_on(s + d + d) == make_piece(Us, PAWN))
+					score -= ((pos.piece_on(s + d + d) == make_piece(Us, PAWN)) && (attackedBy[Them][PAWN] & (s + d)))
+							? !pos.empty(s + d + d + pawn_push(Us)) ? CorneredBishop : CorneredBishop1 : CorneredBishop2;
+			}
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
             // pawn diagonally in front of it is a very serious problem, especially
