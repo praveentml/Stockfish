@@ -136,7 +136,7 @@ namespace {
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CorneredBishop     = S( 117, 79);
   constexpr Score CorneredBishop1    = S( 56, 48);
-  constexpr Score CorneredBishop2    = S( 45, 58);
+  constexpr Score CorneredBishop2    = S( 46, 57);
   constexpr Score FlankAttacks       = S(  8,  0);
   constexpr Score Hanging            = S( 69, 36);
   constexpr Score KingProtector      = S(  7,  8);
@@ -336,10 +336,8 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
 
-                if (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1))
+                if ((s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1)) && (b & pos.pieces(Us, PAWN)) && (mob <= 1))
 				{
-					Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
-					if (pos.piece_on(s + d + d) == make_piece(Us, PAWN))
 						score -= CorneredBishop2;
 				}
             }
