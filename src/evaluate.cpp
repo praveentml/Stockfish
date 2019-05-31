@@ -340,8 +340,7 @@ namespace {
 				{
 					Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
 					if (pos.piece_on(s + d + d) == make_piece(Us, PAWN))
-						score -= ((pos.piece_on(s + d + d) == make_piece(Us, PAWN)) && (attackedBy[Them][PAWN] & (s + d)))
-								? !pos.empty(s + d + d + pawn_push(Us)) ? CorneredBishop : CorneredBishop1 : CorneredBishop2;
+						score -= CorneredBishop2;
 				}
             }
 
