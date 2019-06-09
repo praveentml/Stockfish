@@ -613,7 +613,7 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares, bb1;
+    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
     Score score = SCORE_ZERO;
 
     b = pe->passed_pawns(Us);
@@ -641,10 +641,8 @@ namespace {
             if (r != RANK_7)
                 bonus -= make_score(0, king_proximity(Us, blockSq + Up) * w);
 
-            bb1 = blockSq & (pos.pieces(Them, QUEEN) | attackedBy[Us][ALL_PIECES]);
-
             // If the pawn is free to advance, then increase the bonus
-            if (pos.empty(blockSq) || bb1)
+            if (pos.empty(blockSq) || !(pos.pieces(Them) & blockSq))
             {
                 // If there is a rook or queen attacking/defending the pawn from behind,
                 // consider all the squaresToQueen. Otherwise consider only the squares
