@@ -650,13 +650,10 @@ namespace {
 
                 // If there aren't any enemy attacks, assign a big bonus. Otherwise
                 // assign a smaller bonus if the block square isn't attacked.
-                int k = !unsafeSquares ? 20 : !(unsafeSquares & blockSq) ? 9 : 0;
-
-                if (defendedSquares == squaresToQueen)
-                    k += 7;
+                int k = !unsafeSquares ? 20 : !(unsafeSquares & blockSq) ? 11 : 3;
 
                 // Assign a larger bonus if the block square is defended.
-                else if (defendedSquares & blockSq)
+                if (defendedSquares & blockSq)
                     k += 5;
 
                 bonus += make_score(k * w, k * w);
