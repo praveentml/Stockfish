@@ -281,8 +281,10 @@ namespace {
           : Pt ==   ROOK ? attacks_bb<  ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK))
                          : pos.attacks_from<Pt>(s);
 
+        const Square ksq = pos.square<KING>(Us);
+
         if (pos.blockers_for_king(Us) & s)
-            b &= LineBB[pos.square<KING>(Us)][s];
+            b &= LineBB[ksq][s];
 
         attackedBy2[Us] |= attackedBy[Us][ALL_PIECES] & b;
         attackedBy[Us][Pt] |= b;
@@ -314,7 +316,8 @@ namespace {
                 score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
-            score -= KingProtector * distance(s, pos.square<KING>(Us));
+            if(!(KingFlank[file_of(ksq)] & s))
+            	score -= KingProtector * distance(s, ksq);
 
             if (Pt == BISHOP)
             {
@@ -358,7 +361,7 @@ namespace {
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
-                File kf = file_of(pos.square<KING>(Us));
+                File kf = file_of(ksq);
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
