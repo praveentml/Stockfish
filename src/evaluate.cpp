@@ -316,7 +316,7 @@ namespace {
                 score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
-            if(!(KingFlank[file_of(ksq)] & s))
+            if(!(attackedBy[Us][KING] & s))
             	score -= KingProtector * distance(s, ksq);
 
             if (Pt == BISHOP)
