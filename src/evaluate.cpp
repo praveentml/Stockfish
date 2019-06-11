@@ -314,7 +314,7 @@ namespace {
             if (shift<Down>(pos.pieces(PAWN)) & s)
                 score += MinorBehindPawn;
 
-            if((s + Up) & b)
+            if((shift<Up>(pos.pieces(PAWN))) & b)
             	score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
