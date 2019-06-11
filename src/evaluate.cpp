@@ -311,7 +311,7 @@ namespace {
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
-                score += MinorBehindPawn;
+                score += MinorBehindPawn * (Pt == KNIGHT ? 2 : 1);
 
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
@@ -707,7 +707,7 @@ namespace {
 
     int bonus = popcount(safe) + popcount(behind & safe);
     int weight = pos.count<ALL_PIECES>(Us) - 1;
-    Score score = make_score(bonus * weight / 8, 0);
+    Score score = make_score(bonus * weight * weight / 16, 0);
 
     if (T)
         Trace::add(SPACE, Us, score);
