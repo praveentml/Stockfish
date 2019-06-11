@@ -265,6 +265,7 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
+    constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
@@ -311,7 +312,10 @@ namespace {
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
-                score += MinorBehindPawn * (Pt == KNIGHT ? 2 : 1);
+                score += MinorBehindPawn;
+
+            if((s + Up) & b)
+            	score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
