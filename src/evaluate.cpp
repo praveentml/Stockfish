@@ -311,7 +311,7 @@ namespace {
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
-                score += MinorBehindPawn / (Pt == KNIGHT ? 1 : 2);
+                score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
@@ -320,7 +320,7 @@ namespace {
             {
                 // Penalty according to number of pawns on the same color square as the
                 // bishop, bigger when the center files are blocked with pawns.
-                Bitboard blocked = pos.pieces(Us, PAWN) & shift<Down>(pos.pieces());
+                Bitboard blocked = pos.pieces(Us, PAWN) & shift<Down>(pos.pieces(Us, ALL_PIECES));
 
                 score -= BishopPawns * pos.pawns_on_same_color_squares(Us, s)
                                      * (1 + popcount(blocked & CenterFiles));
