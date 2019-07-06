@@ -348,8 +348,9 @@ namespace {
 
         if (Pt == ROOK)
         {
+        	Rank rookRank = relative_rank(Us, s);
             // Bonus for aligning rook with enemy pawns on the same rank/file
-            if (relative_rank(Us, s) >= RANK_5)
+            if (rookRank >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
@@ -361,7 +362,7 @@ namespace {
             {
                 File kf = file_of(pos.square<KING>(Us));
                 if ((kf < FILE_E) == (file_of(s) < kf))
-                    score -= TrappedRook * (1 + !pos.castling_rights(Us));
+                    score -= TrappedRook * ((rookRank == rank_of(pos.square<KING>(Us)) ? 1 : 0) + !pos.castling_rights(Us));
             }
         }
 
