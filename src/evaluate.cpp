@@ -636,6 +636,10 @@ namespace {
                 if ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq))
                     k += 5;
 
+                // Assign a larger bonus if the pawn span is defended
+                if (!(passed_pawn_span(Us, s) & (attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & ~attackedBy[Us][ALL_PIECES]))
+                	k += (k / 2);
+
                 bonus += make_score(k * w, k * w);
             }
         } // r > RANK_3
