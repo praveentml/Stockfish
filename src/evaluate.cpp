@@ -549,6 +549,17 @@ namespace {
     b = pawn_attacks_bb<Us>(b) & nonPawnEnemies;
     score += ThreatByPawnPush * popcount(b);
 
+    //penalty if there is no way (capturing or blocking) of eliminating isolated pawns of enemy
+    b = pos.pieces(Them, PAWN);
+    while(b)
+    {
+    	if(~attackedBy[Us][ALL_PIECES] && !(adjacent_files_bb(pop_lsb(&b)) & pos.pieces(Us, PAWN)))
+    	{
+    		score -= make_score(-29, 37);
+    		break;
+    	}
+    }
+
     // Bonus for threats on the next moves against enemy queen
     if (pos.count<QUEEN>(Them) == 1)
     {
