@@ -555,7 +555,7 @@ namespace {
     {
     	if(~attackedBy[Us][ALL_PIECES] && !(adjacent_files_bb(pop_lsb(&b)) & pos.pieces(Us, PAWN)))
     	{
-    		score -= make_score(24, 20);
+    		score -= make_score(7, 11);
     		break;
     	}
     }
