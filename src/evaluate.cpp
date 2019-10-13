@@ -263,7 +263,7 @@ namespace {
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
 
-    Bitboard b, bb;
+    Bitboard b, bb, bb1;
     Score score = SCORE_ZERO;
 
     attackedBy[Us][Pt] = 0;
@@ -296,11 +296,12 @@ namespace {
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus if piece is on an outpost square or can reach one
-            bb = OutpostRanks & attackedBy[Us][PAWN] & ~pe->pawn_attacks_span(Them);
+        	bb1 = OutpostRanks & attackedBy[Us][PAWN];
+            bb =  bb1 & ~(pe->pawn_attacks_span(Them) & ~pawn_attacks_bb<Them>(bb1));
             if (bb & s)
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
 
-            else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
+            else if (Pt == KNIGHT && (bb & b & ~pos.pieces(Us)))
                 score += Outpost;
 
             // Knight and Bishop bonus for being right behind a pawn
