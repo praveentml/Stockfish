@@ -342,7 +342,7 @@ namespace {
         if (Pt == ROOK)
         {
             // Bonus for rook on the same file as a queen
-            if (file_bb(s) & pos.pieces(QUEEN))
+            if (file_bb(s) & pos.pieces(QUEEN, ROOK))
                 score += RookOnQueenFile;
 
             // Bonus for rook on an open or semi-open file
