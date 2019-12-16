@@ -356,15 +356,9 @@ namespace {
         if (Pt == QUEEN)
         {
             // Penalty if any relative pin or discovered attack against the queen
-            Bitboard queenPinners,  blockers;
-            blockers = pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners);
-            if (blockers)
-            {
-            	if(blockers & pos.pieces(Us, PAWN) & Center)
-            		score -= ((WeakQueen * 3) / 2);
-            	else
-            		score -= WeakQueen;
-            }
+            Bitboard queenPinners;
+            if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
+                score -= WeakQueen;
         }
     }
     if (T)
@@ -540,6 +534,11 @@ namespace {
     b = pos.pieces(Us, PAWN) & safe;
     b = pawn_attacks_bb<Us>(b) & nonPawnEnemies;
     score += ThreatBySafePawn * popcount(b);
+
+    // Bonus for centralizing the knight
+    b = pos.pieces(Us, KNIGHT) & Center;
+    if((b & ~stronglyProtected) && ~(pawn_attack_span(Us,(pop_lsb(&b))) & pos.pieces(Them, PAWN)))
+    	score += Outpost;
 
     // Find squares where our pawns can push on the next move
     b  = shift<Up>(pos.pieces(Us, PAWN)) & ~pos.pieces();
