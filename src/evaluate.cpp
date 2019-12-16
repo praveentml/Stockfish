@@ -359,7 +359,7 @@ namespace {
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
             {
-            	if(s & Center)
+            	if((pos.piece_on(s) == make_piece(Us, PAWN)) && (s & Center))
             		score -= ((WeakQueen * 3) / 2);
             	else
             		score -= WeakQueen;
