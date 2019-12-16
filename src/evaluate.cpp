@@ -240,7 +240,7 @@ namespace {
                            clamp(rank_of(ksq), RANK_2, RANK_7));
     kingRing[Us] = PseudoAttacks[KING][s] | s;
 
-    kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them) & ~pos.blockers_for_king(Them));
+    kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
     kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
 
     // Remove from kingRing[] the squares defended by two pawns
@@ -613,6 +613,8 @@ namespace {
             if (pos.empty(blockSq))
             {
                 squaresToQueen = forward_file_bb(Us, s);
+                Square queeningSq = relative_square(Us, make_square(file_of(s), RANK_8));
+                Square bishopSq = pos.square<BISHOP>(Them);
                 unsafeSquares = passed_pawn_span(Us, s);
 
                 bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN);
@@ -625,6 +627,7 @@ namespace {
                 // and even smaller bonus if it is attacked but block square is not.
                 int k = !unsafeSquares                    ? 35 :
                         !(unsafeSquares & squaresToQueen) ? 20 :
+                        (opposite_colors(bishopSq, queeningSq)) ? 13 :
                         !(unsafeSquares & blockSq)        ?  9 :
                                                              0 ;
 
