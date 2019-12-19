@@ -121,13 +121,16 @@ namespace {
         passed =   !(stoppers ^ lever)
                 || (   !(stoppers ^ leverPush)
                     && popcount(phalanx) >= popcount(leverPush))
-                || (   stoppers == blocked && r >= RANK_5
+                || (   stoppers == blocked && r > RANK_5
                     && (shift<Up>(support) & ~(theirPawns | doubleAttackThem)));
 
         // Passed pawns will be properly scored later in evaluation when we have
         // full attack info.
         if (passed)
+        {
             e->passedPawns[Us] |= s;
+        	score += BlockedStorm;
+        }
 
         // Score this pawn
         if (support | phalanx)
