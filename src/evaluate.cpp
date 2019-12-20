@@ -121,6 +121,10 @@ namespace {
     S(0, 0), S(3, 44), S(38, 71), S(38, 61), S(0, 38), S(51, 38)
   };
 
+  constexpr Score RestrictedPiece[PIECE_TYPE_NB] = {
+      S(7, 7), S(15, 13), S(16, 17), S(40, 34), S(67, 71), S(71, 70)
+  };
+
   // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
   constexpr Score PassedRank[RANK_NB] = {
     S(0, 0), S(10, 28), S(17, 33), S(15, 41), S(62, 72), S(168, 177), S(276, 260)
@@ -138,7 +142,6 @@ namespace {
   constexpr Score Outpost            = S( 30, 21);
   constexpr Score PassedFile         = S( 11,  8);
   constexpr Score PawnlessFlank      = S( 17, 95);
-  constexpr Score RestrictedPiece    = S(  7,  7);
   constexpr Score ReachableOutpost   = S( 32, 10);
   constexpr Score RookOnQueenFile    = S(  7,  6);
   constexpr Score SliderOnQueen      = S( 59, 18);
@@ -525,7 +528,8 @@ namespace {
        & ~stronglyProtected
        &  attackedBy[Us][ALL_PIECES];
 
-    score += RestrictedPiece * popcount(b);
+    while (b)
+    	score += RestrictedPiece[type_of(pos.piece_on(pop_lsb(&b)))];
 
     // Protected or unattacked squares
     safe = ~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES];
