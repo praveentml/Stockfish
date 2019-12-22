@@ -227,7 +227,7 @@ namespace {
 
     // Squares occupied by those pawns, by our king or queen, by blockers to attacks on our king
     // or controlled by enemy pawns are excluded from the mobility area.
-    mobilityArea[Us] = ~(b | pos.pieces(Us) | pos.blockers_for_king(Us) | pe->pawn_attacks(Them));
+    mobilityArea[Us] = ~(b | pos.pieces(Us, KING, QUEEN) | pos.blockers_for_king(Us) | pe->pawn_attacks(Them));
 
     // Initialize attackedBy[] for king and pawns
     attackedBy[Us][KING] = pos.attacks_from<KING>(ksq);
@@ -337,7 +337,7 @@ namespace {
         if (Pt == ROOK)
         {
             // Bonus for rook on the same file as a queen
-            if (file_bb(s) & pos.pieces(QUEEN))
+            if (file_bb(s) & (pos.pieces(QUEEN) | more_than_one(pos.pieces(ROOK))))
                 score += RookOnQueenFile;
 
             // Bonus for rook on an open or semi-open file
