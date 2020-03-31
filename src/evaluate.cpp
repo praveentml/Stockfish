@@ -470,7 +470,7 @@ namespace {
     {
 		Bitboard kingEnemyPawn = file_bb(ksq) & pos.pieces(Them, PAWN) & ~attackedBy[Us][ALL_PIECES];
 		if(kingEnemyPawn)
-			score -= KingProtector * (distance(pop_lsb(&kingEnemyPawn), ksq) <= 3 ? 2 : 0);
+			score -= make_score(5,7) * (distance(pop_lsb(&kingEnemyPawn), ksq) <= 3 ? 2 : 0);
     }
     // Penalty if king flank is under attack, potentially moving toward the king
     score -= FlankAttacks * kingFlankAttack;
