@@ -1144,6 +1144,9 @@ moves_loop: // When in check, search starts from here
           if (ttPv)
               r -= 2;
 
+          if (moveCount > 1 + 2 * rootNode)
+        	  r++;
+
           if (moveCountPruning && !formerPv)
               r++;
 
