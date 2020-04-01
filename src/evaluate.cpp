@@ -361,7 +361,7 @@ namespace {
                 score -= WeakQueen;
         }
 
-        int pieceMob = attackedBy[Us][Pt] & ~pe->pawn_attacks_span(Them);
+        int pieceMob = popcount(attackedBy[Us][Pt] & ~pe->pawn_attacks_span(Them));
 
         if (pieceMob <=1)
         	score -= TrappedRook;
