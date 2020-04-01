@@ -332,6 +332,11 @@ namespace {
                                                                                   : CorneredBishop;
                 }
             }
+
+            int pieceMob = popcount(attackedBy[Us][Pt] & ~pe->pawn_attacks_span(Them));
+
+            if (pieceMob <=1)
+            	score -= TrappedRook;
         }
 
         if (Pt == ROOK)
@@ -361,10 +366,6 @@ namespace {
                 score -= WeakQueen;
         }
 
-        int pieceMob = popcount(attackedBy[Us][Pt] & ~pe->pawn_attacks_span(Them));
-
-        if (pieceMob <=1)
-        	score -= TrappedRook;
     }
     if (T)
         Trace::add(Pt, Us, score);
