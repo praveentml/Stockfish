@@ -360,6 +360,11 @@ namespace {
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
         }
+
+        int pieceMob = attackedBy[Us][Pt] & ~pe->pawn_attacks_span(Them);
+
+        if (pieceMob <=1)
+        	score -= TrappedRook;
     }
     if (T)
         Trace::add(Pt, Us, score);
