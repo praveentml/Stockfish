@@ -336,7 +336,7 @@ namespace {
             int pieceMob = popcount(attackedBy[Us][Pt] & ~pe->pawn_attacks_span(Them));
 
             if (pieceMob <=1)
-            	score -= TrappedRook;
+            	score -= CorneredBishop;
         }
 
         if (Pt == ROOK)
