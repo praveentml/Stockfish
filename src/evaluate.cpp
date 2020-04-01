@@ -335,7 +335,7 @@ namespace {
 
             Bitboard initialSq = relative_square(Us, SQ_B1) | relative_square(Us, SQ_G1) | relative_square(Us, SQ_C1) | relative_square(Us, SQ_F1);
             if(mob <= 1)
-            	score -= RestrictedPiece * popcount(initialSq & s);
+            	score -= RestrictedPiece * ((initialSq & s) ? 2 : 1);
         }
 
         if (Pt == ROOK)
