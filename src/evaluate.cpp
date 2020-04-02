@@ -332,6 +332,13 @@ namespace {
                                                                                   : CorneredBishop;
                 }
             }
+
+            if (Pt == KNIGHT)
+            {
+				Bitboard initialSq = relative_square(Us, SQ_B1) | relative_square(Us, SQ_G1) | relative_square(Us, SQ_C1) | relative_square(Us, SQ_F1);
+				if(mob <= 1)
+					score -= (initialSq & s) ? make_score(15,15) : make_score(10,10);
+            }
         }
 
         if (Pt == ROOK)
