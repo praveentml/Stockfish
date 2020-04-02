@@ -513,7 +513,7 @@ void Thread::search() {
       if (!Threads.stop)
           completedDepth = rootDepth;
 
-      if (rootMoves[0].pv[0] != lastBestMove) {
+      if (rootMoves[0].pv[0] != lastBestMove && bestValue > mainThread->previousScore) {
          lastBestMove = rootMoves[0].pv[0];
          lastBestMoveDepth = rootDepth;
       }
