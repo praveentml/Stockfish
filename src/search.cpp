@@ -514,7 +514,7 @@ void Thread::search() {
       if (!Threads.stop)
           completedDepth = rootDepth;
 
-      if (rootMoves[0].pv[0] != lastBestMove && bestValue > mainThread->previousScore) {
+      if (rootMoves[0].pv[0] != lastBestMove) {
          lastBestMove = rootMoves[0].pv[0];
          lastBestMoveDepth = rootDepth;
       }
@@ -1205,7 +1205,7 @@ moves_loop: // When in check, search starts from here
 
           value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, d, true);
 
-          doFullDepthSearch = value > alpha && d != newDepth;
+          doFullDepthSearch = (value > alpha || value > thisThread->rootMoves[0].previousScore) && d != newDepth;
 
           didLMR = true;
       }
