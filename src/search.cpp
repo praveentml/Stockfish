@@ -1205,13 +1205,13 @@ moves_loop: // When in check, search starts from here
 
           value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, d, true);
 
-          doFullDepthSearch = (value > alpha || value > thisThread->rootMoves[0].previousScore) && d != newDepth;
+          doFullDepthSearch = value > alpha && d != newDepth;
 
           didLMR = true;
       }
       else
       {
-          doFullDepthSearch = !PvNode || moveCount > 1;
+          doFullDepthSearch = !PvNode || moveCount > 1 || value > thisThread->rootMoves[0].previousScore;
 
           didLMR = false;
       }
