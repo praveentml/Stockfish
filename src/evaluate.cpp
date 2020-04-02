@@ -333,12 +333,6 @@ namespace {
                 }
             }
 
-            if (Pt == KNIGHT)
-            {
-				Bitboard initialSq = relative_square(Us, SQ_B1) | relative_square(Us, SQ_G1) | relative_square(Us, SQ_C1) | relative_square(Us, SQ_F1);
-				if(mob <= 1)
-					score -= (initialSq & s) ? make_score(9,9) : make_score(7,7);
-            }
         }
 
         if (Pt == ROOK)
@@ -367,6 +361,10 @@ namespace {
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
         }
+
+        Bitboard initialSq = relative_square(Us, SQ_B1) | relative_square(Us, SQ_G1) | relative_square(Us, SQ_C1) | relative_square(Us, SQ_F1);
+		if(mob <= 1)
+			score -= (initialSq & s) ? make_score(8,8) : make_score(7,7);
     }
     if (T)
         Trace::add(Pt, Us, score);
