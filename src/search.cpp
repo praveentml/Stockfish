@@ -1211,7 +1211,7 @@ moves_loop: // When in check, search starts from here
       }
       else
       {
-          doFullDepthSearch = !PvNode || moveCount > 1 || (value > thisThread->rootMoves[0].previousScore && rootNode);
+          doFullDepthSearch = !PvNode || moveCount > 1 || (value > thisThread->rootMoves[0].previousScore && (rootNode || value < beta));
 
           didLMR = false;
       }
