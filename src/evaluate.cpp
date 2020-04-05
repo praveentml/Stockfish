@@ -344,6 +344,9 @@ namespace {
             if (pos.is_on_semiopen_file(Us, s))
                 score += RookOnFile[pos.is_on_semiopen_file(Them, s)];
 
+            if (pos.is_on_semiopen_rank(Them, s))
+            	score += RookOnFile[pos.is_on_semiopen_rank(Us, s)];
+
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
