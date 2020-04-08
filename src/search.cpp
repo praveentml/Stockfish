@@ -868,7 +868,7 @@ namespace {
 
         if (reverse_move((ss-1)->currentMove) == (ss+1)->currentMove
          && nullValue < beta
-         && depth < 13)
+         && depth < 11)
             nullValue = beta;
 
         if (nullValue >= beta)
