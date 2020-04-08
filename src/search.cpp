@@ -869,8 +869,7 @@ namespace {
         pos.undo_null_move();
 
         if (reverse_move((ss-1)->currentMove) == (ss+1)->currentMove
-            && nullValue < beta
-            && depth < 11)
+            && nullValue < beta)
                 nullValue = beta;
 
         if (nullValue >= beta)
