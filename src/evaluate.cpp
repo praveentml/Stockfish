@@ -353,16 +353,6 @@ namespace {
             }
         }
 
-        if (Pt == QUEEN)
-        {
-            // Penalty if any relative pin or discovered attack against the queen
-            Bitboard queenPinners;
-            if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
-            {
-            	if(queenPinners & attackedBy[Them][ALL_PIECES] & ~attackedBy2[Us])
-            		score -= WeakQueen;
-            }
-        }
     }
     if (T)
         Trace::add(Pt, Us, score);
@@ -565,6 +555,17 @@ namespace {
            | (attackedBy[Us][ROOK  ] & pos.attacks_from<ROOK  >(s));
 
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
+    }
+
+    if (pos.count<QUEEN>(Us) == 1)
+    {
+        // Penalty if any relative pin or discovered attack against the queen
+        Bitboard queenPinners;
+        if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), pos.square<QUEEN>(Us), queenPinners))
+        {
+        	if(queenPinners & attackedBy[Them][ALL_PIECES] & ~attackedBy2[Us])
+        		score -= WeakQueen;
+        }
     }
 
     if (T)
