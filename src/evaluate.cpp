@@ -564,6 +564,17 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    if (pos.count<QUEEN>(Us) == 1)
+    {
+        // Penalty if any relative pin or discovered attack against the queen
+        Bitboard queenPinners;
+        if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), pos.square<QUEEN>(Us), queenPinners))
+        {
+        	if(queenPinners & ~weak)
+        		score -= WeakQueen;
+        }
+    }
+
     if (T)
         Trace::add(THREAT, Us, score);
 
