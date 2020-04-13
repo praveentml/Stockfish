@@ -353,13 +353,6 @@ namespace {
             }
         }
 
-        if (Pt == QUEEN)
-        {
-            // Penalty if any relative pin or discovered attack against the queen
-            Bitboard queenPinners;
-            if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
-                score -= WeakQueen;
-        }
     }
     if (T)
         Trace::add(Pt, Us, score);
