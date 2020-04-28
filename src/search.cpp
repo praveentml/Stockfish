@@ -1132,8 +1132,9 @@ moves_loop: // When in check, search starts from here
           extension = 2;
 
       if (   countermove == ttMove
-          && (type_of(movedPiece) == PAWN))
-          extension = 2;
+          && (type_of(movedPiece) == PAWN)
+		  && type_of(move) == NORMAL)
+          extension = 1;
 
       // Add extension to new depth
       newDepth += extension;
