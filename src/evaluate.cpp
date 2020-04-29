@@ -319,6 +319,9 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
 
+                if(!(attackedBy[Us][PAWN] & s) && (kingRing[Them] & s) && mob <= 1)
+                	score -= CorneredBishop;
+
                 // An important Chess960 pattern: a cornered bishop blocked by a friendly
                 // pawn diagonally in front of it is a very serious problem, especially
                 // when that pawn is also blocked.
