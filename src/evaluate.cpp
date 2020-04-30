@@ -722,7 +722,7 @@ namespace {
                            && !pawnsOnBothFlanks;
 
     bool infiltration = rank_of(pos.square<KING>(WHITE)) > RANK_3
-                     || rank_of(pos.square<KING>(BLACK)) < RANK_4;
+                     || rank_of(pos.square<KING>(BLACK)) < RANK_6;
 
     // Compute the initiative bonus for the attacking side
     int complexity =   9 * pe->passed_count()
