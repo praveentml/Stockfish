@@ -145,7 +145,7 @@ namespace {
   constexpr Score ThreatByPawnPush    = S( 48, 39);
   constexpr Score ThreatBySafePawn    = S(173, 94);
   constexpr Score TrappedRook         = S( 55, 13);
-  constexpr Score WeakQueen           = S( 51, 14);
+  //constexpr Score WeakQueen           = S( 51, 14);
   constexpr Score WeakQueenProtection = S( 15,  0);
 
 #undef S
@@ -560,13 +560,13 @@ namespace {
    if (pos.count<QUEEN>(Us) == 1)
    {
 	   // Penalty if any relative pin or discovered attack against the queen
-	   Bitboard queenPinners, queenSliders;
-	   queenSliders = pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), pos.square<QUEEN>(Us), queenPinners);
-	   if (queenSliders & ~(pos.pieces(Them, PAWN, KNIGHT) & attackedBy[Them][PAWN]))
-	   {
-		   if(queenPinners & ~weak)
-			   score -= WeakQueen;
-	   }
+       Square s = pos.square<QUEEN>(Us);
+       safe = mobilityArea[Them] & ~(attackedBy[Us][PAWN] | (attackedBy2[Us] & ~attackedBy2[Them]));
+
+       b =  (attackedBy[Them][BISHOP] & pos.attacks_from<BISHOP>(s))
+          | (attackedBy[Them][ROOK  ] & pos.attacks_from<ROOK  >(s));
+
+       score -= SliderOnQueen * popcount(b & safe & attackedBy2[Them]);
 	}
 
     if (T)
