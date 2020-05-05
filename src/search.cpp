@@ -1138,7 +1138,7 @@ moves_loop: // When in check, search starts from here
           && (captureOrPromotion || type_of(movedPiece) == PAWN))
           extension = 2;
 
-      if ( pos.rule50_count() > 10
+      if ( pos.rule50_count() > 80
           && type_of(movedPiece) == PAWN && !captureOrPromotion)
           extension = 2;
 
