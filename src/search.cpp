@@ -1138,9 +1138,8 @@ moves_loop: // When in check, search starts from here
           && (captureOrPromotion || type_of(movedPiece) == PAWN))
           extension = 2;
 
-      if ( pos.rule50_count() > 60
-          && type_of(movedPiece) == PAWN && !captureOrPromotion
-		  && pos.non_pawn_material() <= 2 * RookValueMg)
+      if ( pos.rule50_count() > 10
+          && type_of(movedPiece) == PAWN && !captureOrPromotion)
           extension = 2;
 
       // Add extension to new depth
