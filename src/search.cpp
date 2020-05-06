@@ -1139,6 +1139,7 @@ moves_loop: // When in check, search starts from here
           extension = 2;
 
       else if ( pos.rule50_count() > 60
+    	  && (static_cast<MainThread*>(thisThread)-> bestPreviousScore) <= bestValue
           && type_of(movedPiece) == PAWN && !captureOrPromotion)
           extension = 2;
 
