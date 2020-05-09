@@ -643,6 +643,8 @@ namespace {
     // Check for the available remaining time
     if (thisThread == Threads.main())
         static_cast<MainThread*>(thisThread)->check_time();
+    else
+        thisThread -> bestPreviousScore = Threads.main()->bestPreviousScore;
 
     // Used to send selDepth info to GUI (selDepth counts from 1, ply from 0)
     if (PvNode && thisThread->selDepth < ss->ply + 1)
@@ -1139,7 +1141,7 @@ moves_loop: // When in check, search starts from here
           extension = 2;
 
       if ( pos.rule50_count() > 60
-     	  && (Threads.main() == thisThread && Threads.main()->bestPreviousScore <= bestValue)
+     	  && (thisThread->bestPreviousScore <= bestValue)
            && type_of(movedPiece) == PAWN && !captureOrPromotion)
            extension = 2;
 

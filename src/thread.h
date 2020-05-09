@@ -68,6 +68,7 @@ public:
 
   Position rootPos;
   Search::RootMoves rootMoves;
+  Value bestPreviousScore;
   Depth rootDepth, completedDepth;
   CounterMoveHistory counterMoves;
   ButterflyHistory mainHistory;
