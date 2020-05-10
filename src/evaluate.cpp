@@ -262,7 +262,7 @@ namespace {
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
 
-    Bitboard b, bb;
+    Bitboard b, bb, bib;
     Score score = SCORE_ZERO;
 
     attackedBy[Us][Pt] = 0;
@@ -323,7 +323,8 @@ namespace {
                 score -= BishopXRayPawns * popcount(PseudoAttacks[BISHOP][s] & pos.pieces(Them, PAWN));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
-                if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center & ~attacks_bb<BISHOP>(s,pos.pieces(Them,BISHOP))))
+                bib = attacks_bb<BISHOP>(s, pos.pieces(PAWN));
+                if (!(bib & pos.pieces(Them, BISHOP)) && more_than_one(bib & Center))
                     score += LongDiagonalBishop;
 
                 // An important Chess960 pattern: a cornered bishop blocked by a friendly
