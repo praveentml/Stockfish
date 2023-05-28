@@ -505,8 +505,8 @@ namespace {
                 if (mob <= 3)
                 {
                     File kf = file_of(pos.square<KING>(Us));
-                    if ((kf < FILE_E) == (file_of(s) < kf))
-                        score -= TrappedRook * (1 + !pos.castling_rights(Us));
+                    bool isTrapped = (kf < FILE_E) == (file_of(s) < kf);
+                    score -= (isTrapped && !pos.castling_rights(Us)) ? 2 * TrappedRook : isTrapped ? TrappedRook : 0;
                 }
             }
         }
