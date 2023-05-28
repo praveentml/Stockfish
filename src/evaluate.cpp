@@ -273,6 +273,7 @@ namespace {
   constexpr Score RestrictedPiece     = S(  6,  7);
   constexpr Score RookOnKingRing      = S( 16,  0);
   constexpr Score SliderOnQueen       = S( 62, 21);
+  constexpr Score RookOn7thRank       = S( 10, 30);
   constexpr Score ThreatByKing        = S( 24, 87);
   constexpr Score ThreatByPawnPush    = S( 48, 39);
   constexpr Score ThreatBySafePawn    = S(167, 99);
@@ -487,28 +488,17 @@ namespace {
         if constexpr (Pt == ROOK)
         {
             // Bonuses for rook on a (semi-)open or closed file
-            if (pos.is_on_semiopen_file(Us, s))
-            {
-                score += RookOnOpenFile[pos.is_on_semiopen_file(Them, s)];
-            }
-            else
-            {
-                // If our pawn on this file is blocked, increase penalty
-                if ( pos.pieces(Us, PAWN)
-                   & shift<Down>(pos.pieces())
-                   & file_bb(s))
-                {
-                    score -= RookOnClosedFile;
-                }
+        	bool isOnSemiOpenFile = pos.is_on_semiopen_file(Us, s);
+        	score += isOnSemiOpenFile ? RookOnOpenFile[pos.is_on_semiopen_file(Them, s)]
+        	                                  : -(RookOnClosedFile & int(pos.pieces(Us, PAWN) & shift<Down>(pos.pieces()) & file_bb(s)));
 
-                // Penalty when trapped by the king, even more if the king cannot castle
-                if (mob <= 3)
-                {
-                    File kf = file_of(pos.square<KING>(Us));
-                    bool isTrapped = (kf < FILE_E) == (file_of(s) < kf);
-                    score -= (isTrapped && !pos.castling_rights(Us)) ? 2 * TrappedRook : isTrapped ? TrappedRook : 0;
-                }
-            }
+			// Penalty when trapped by the king, even more if the king cannot castle
+			File kf = file_of(pos.square<KING>(Us));
+			bool isTrapped = (kf < FILE_E) == (file_of(s) < kf);
+			score -= (TrappedRook * (!pos.castling_rights(Us) + isTrapped)) & int(mob <= 3);
+
+			// Bonuses for rook on the 7th rank
+			score += RookOn7thRank & int(rank_of(s) == (Us == WHITE ? RANK_7 : RANK_2));
         }
 
         if constexpr (Pt == QUEEN)
