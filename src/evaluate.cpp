@@ -432,23 +432,28 @@ namespace {
         {
             // Bonus if the piece is on an outpost square or can reach one
             // Bonus for knights (UncontestedOutpost) if few relevant targets
-            bb = OutpostRanks & (attackedBy[Us][PAWN] | shift<Down>(pos.pieces(PAWN)))
-                              & ~pe->pawn_attacks_span(Them);
+            Bitboard outpostRanks = OutpostRanks & (attackedBy[Us][PAWN] | shift<Down>(pos.pieces(PAWN))) & ~pe->pawn_attacks_span(Them);
             Bitboard targets = pos.pieces(Them) & ~pos.pieces(PAWN);
 
-            if (   Pt == KNIGHT
-                && bb & s & ~CenterFiles // on a side outpost
-                && !(b & targets)        // no relevant attacks
-                && (!more_than_one(targets & (s & QueenSide ? QueenSide : KingSide))))
-                score += UncontestedOutpost * popcount(pos.pieces(PAWN) & (s & QueenSide ? QueenSide : KingSide));
-            else if (bb & s)
+            if (Pt == KNIGHT)
+            {
+                if (outpostRanks & s & ~CenterFiles && !(b & targets) && (!more_than_one(targets & (s & QueenSide ? QueenSide : KingSide))))
+                    score += UncontestedOutpost * popcount(pos.pieces(PAWN) & (s & QueenSide ? QueenSide : KingSide));
+            }
+            else if (outpostRanks & s)
+            {
                 score += Outpost[Pt == BISHOP];
-            else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
+            }
+            else if (Pt == KNIGHT && (outpostRanks & b) && !(pos.pieces(Us) & s))
+            {
                 score += ReachableOutpost;
+            }
 
             // Bonus for a knight or bishop shielded by pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
+            {
                 score += MinorBehindPawn;
+            }
 
             // Penalty if the piece is far from the king
             score -= KingProtector[Pt == BISHOP] * distance(pos.square<KING>(Us), s);
@@ -460,26 +465,35 @@ namespace {
                 // when the bishop is outside the pawn chain.
                 Bitboard blocked = pos.pieces(Us, PAWN) & shift<Down>(pos.pieces());
 
-                score -= BishopPawns[edge_distance(file_of(s))] * pos.pawns_on_same_color_squares(Us, s)
-                                     * (!(attackedBy[Us][PAWN] & s) + popcount(blocked & CenterFiles));
+                int bishopPawnsPenalty = BishopPawns[edge_distance(file_of(s))] * pos.pawns_on_same_color_squares(Us, s)
+                                        * (!(attackedBy[Us][PAWN] & s) + popcount(blocked & CenterFiles));
+                score -= make_score(bishopPawnsPenalty, bishopPawnsPenalty);
 
                 // Penalty for all enemy pawns x-rayed
                 score -= BishopXRayPawns * popcount(attacks_bb<BISHOP>(s) & pos.pieces(Them, PAWN));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
+                {
                     score += LongDiagonalBishop;
+                }
 
                 // An important Chess960 pattern: a cornered bishop blocked by a friendly
                 // pawn diagonally in front of it is a very serious problem, especially
                 // when that pawn is also blocked.
-                if (   pos.is_chess960()
-                    && (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1)))
+                if (pos.is_chess960() && (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1)))
                 {
                     Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
-                    if (pos.piece_on(s + d) == make_piece(Us, PAWN))
-                        score -= !pos.empty(s + d + pawn_push(Us)) ? 4 * make_score(CorneredBishop, CorneredBishop)
-                                                                   : 3 * make_score(CorneredBishop, CorneredBishop);
+                    Square squareToCheck = s + d;
+                    if (pos.piece_on(squareToCheck) == make_piece(Us, PAWN))
+                    {
+                        Square squareBehindPawn = squareToCheck + pawn_push(Us);
+                        if (!pos.empty(squareBehindPawn))
+                        {
+                            score -= !pos.empty(squareBehindPawn + pawn_push(Us)) ? 4 * make_score(CorneredBishop, CorneredBishop)
+                                                                                   : 3 * make_score(CorneredBishop, CorneredBishop);
+                        }
+                    }
                 }
             }
         }
@@ -505,8 +519,8 @@ namespace {
                 if (mob <= 3)
                 {
                     File kf = file_of(pos.square<KING>(Us));
-                    if ((kf < FILE_E) == (file_of(s) < kf))
-                        score -= TrappedRook * (1 + !pos.castling_rights(Us));
+                    bool isTrapped = (kf < FILE_E) == (file_of(s) < kf);
+                    score -= TrappedRook * (!pos.castling_rights(Us) + isTrapped);
                 }
             }
         }
