@@ -1216,7 +1216,7 @@ moves_loop: // When in check, search starts here
           }
       }
 
-      else if (!cutNode && depth >= 3 && move != ttMove && !excludedMove && !capture && type_of(move)!= PROMOTION){
+      else if (!cutNode && depth >= 3 && move != ttMove && !excludedMove && (!capture || type_of(move)!= PROMOTION)){
     	    // Reduce depth for late moves
     	    int reduction = 0;
     	    if (depth >= 6 && moveCount >= 3 && !givesCheck && type_of(pos.moved_piece(move)) != PAWN)
@@ -1225,7 +1225,7 @@ moves_loop: // When in check, search starts here
     	        reduction = 2;
 
     	    // Reduce depth further for quiet moves
-    	    if (reduction > 0 && !capture && !givesCheck)
+    	    if (reduction > 0 && (!capture || !givesCheck))
     	        reduction += 1;
 
     	    // Apply reduced depth to the new search
