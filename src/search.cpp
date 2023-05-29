@@ -1216,13 +1216,19 @@ moves_loop: // When in check, search starts here
           }
       }
 
-      else if (!cutNode && depth >= 3 && move != ttMove && !excludedMove && (!capture || type_of(move)!= PROMOTION)){
+      else if (moveCount > 1 && !cutNode && depth >= 3 && move != ttMove && !excludedMove && (!capture || type_of(move)!= PROMOTION)){
     	    // Reduce depth for late moves
     	    int reduction = 0;
-    	    if (depth >= 6 && moveCount >= 3 && !givesCheck && type_of(pos.moved_piece(move)) != PAWN)
-    	        reduction = 1;
-    	    else if (depth >= 9 && moveCount >= 5 && !givesCheck)
-    	        reduction = 2;
+    	    if (depth >= 6 && moveCount >= 3)
+    	    {
+    	        if (!givesCheck && type_of(pos.moved_piece(move)) != PAWN)
+    	            reduction = 1;
+    	    }
+    	    else if (depth >= 9 && moveCount >= 5)
+    	    {
+    	        if (!givesCheck)
+    	            reduction = 2;
+    	    }
 
     	    // Reduce depth further for quiet moves
     	    if (reduction > 0 && (!capture || !givesCheck))
@@ -1232,7 +1238,7 @@ moves_loop: // When in check, search starts here
     	    int reducedDepth = depth - reduction;
 
     	    // Perform reduced-depth search
-    	    value = -search<NonPV>(pos, ss, alpha, beta, reducedDepth, cutNode);
+    	    value = -search<NonPV>(pos, ss, -beta, -alpha, reducedDepth, cutNode);
       }
 
       // Step 18. Full depth search when LMR is skipped. If expected reduction is high, reduce its depth by 1.
