@@ -1023,8 +1023,13 @@ moves_loop: // When in check, search starts here
 
               if(history < -10000 * depth)
             	  continue;
+              else if(type_of(move) == PROMOTION && history < -5932 * depth)
+            	  continue;
 
-              history += 2 * thisThread->mainHistory[us][from_to(move)];
+              if(move == ss->killers[0])
+            	  history += 4 * thisThread->mainHistory[us][from_to(move)];
+              else
+            	  history += 2 * thisThread->mainHistory[us][from_to(move)];
 
               lmrDepth += history / 7019;
               lmrDepth = std::max(lmrDepth, -2);
