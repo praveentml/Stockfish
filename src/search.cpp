@@ -1021,9 +1021,7 @@ moves_loop: // When in check, search starts here
                   && history < -3792 * depth)
                   continue;
 
-              if(type_of(move) == PROMOTION && history < -5932 * depth)
-            	  continue;
-              else if (history < -4784 * depth)
+              if (history < -4784 * depth)
             	  continue;
 
               history += 2 * thisThread->mainHistory[us][from_to(move)];
