@@ -1234,6 +1234,14 @@ moves_loop: // When in check, search starts here
           (ss+1)->pv[0] = MOVE_NONE;
 
           value = -search<PV>(pos, ss+1, -beta, -alpha, newDepth, false);
+
+		    if (value > alpha)
+		    {
+				if (!rootNode && moveCount > 1 && depth >= 3 && newDepth >= 2 && !(pos.capture(ttMove) || type_of(ttMove) == PROMOTION))
+				{
+					value = -search<PV>(pos, ss+1, -(alpha+1), -alpha, newDepth - (r > 2), false);
+				}
+		    }
       }
 
       // Step 19. Undo move
