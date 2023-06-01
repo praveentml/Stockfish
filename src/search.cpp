@@ -1150,6 +1150,10 @@ moves_loop: // When in check, search starts here
       if (ttCapture)
           r++;
 
+      // Reduced Reduction for Non-Capture Quiet Moves
+      if (!pos.capture(move) && !givesCheck && type_of(move) != PROMOTION)
+    	  r--;
+
       // Decrease reduction for PvNodes based on depth (~2 Elo)
       if (PvNode)
           r -= 1 + 11 / (3 + depth);
