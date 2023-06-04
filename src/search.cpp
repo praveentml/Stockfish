@@ -1150,6 +1150,10 @@ moves_loop: // When in check, search starts here
       if (ttCapture)
           r++;
 
+      // Reduction for Killer Moves
+      if(move == ss->killers[0])
+    	  r += 2;
+
       // Decrease reduction for PvNodes based on depth (~2 Elo)
       if (PvNode)
           r -= 1 + 11 / (3 + depth);
