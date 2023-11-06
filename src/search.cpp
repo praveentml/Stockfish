@@ -1791,9 +1791,12 @@ Move Skill::pick_best(size_t multiPV) {
     // random. Then we choose the move with the resulting highest score.
     for (size_t i = 0; i < multiPV; ++i)
     {
+    	// Adjust weakness based on score difference
+    	double adjustedWeakness = weakness + 0.1 * int(topScore - rootMoves[i].score);
+
         // This is our magic formula
-        int push = int((weakness * int(topScore - rootMoves[i].score)
-                        + delta * (rng.rand<unsigned>() % int(weakness)))
+        int push = int((adjustedWeakness * int(topScore - rootMoves[i].score)
+                        + delta * (rng.rand<unsigned>() % int(adjustedWeakness)))
                        / 128);
 
         if (rootMoves[i].score + push >= maxScore)
