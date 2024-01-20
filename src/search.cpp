@@ -1611,6 +1611,12 @@ Value Search::Worker::qsearch(Position& pos, Stack* ss, Value alpha, Value beta,
             // Do not search moves with bad enough SEE values (~5 Elo)
             if (!pos.see_ge(move, -77))
                 continue;
+
+            if (move.type_of() == PROMOTION && futilityBase <= alpha)
+            {
+                bestValue = std::max(bestValue, futilityBase);
+                continue;
+            }
         }
 
         // Speculative prefetch as early as possible
